@@ -1,5 +1,5 @@
-use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::program_error::ProgramError;
+use borsh::{BorshDeserialize, BorshSerialize};
 pub enum LeagueInstruction {
     CreateLeague {
         league_id: String,
@@ -8,6 +8,7 @@ pub enum LeagueInstruction {
         events_included: u8,
     },
 }
+
 
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct LeagueInstructionStruct {
