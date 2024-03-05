@@ -12,7 +12,6 @@ pub enum LeagueInstruction {
     CreateAccount {
         user_id: String,
         manager_id: String,
-        address: String,
     }
 }
 
@@ -24,7 +23,6 @@ pub struct LeagueInstructionStruct {
     pub events_included: u8,
     pub user_id: String,
     pub manager_id: String,
-    pub address: Pubkey
 }
 
 // Implement the unpacking of the instruction data
@@ -49,7 +47,7 @@ impl LeagueInstruction {
                 league_name: payload.league_name,
                 events_included: payload.events_included,
             },
-            1 => Self::CreateAccount { user_id: payload.user_id, manager_id: payload.manager_id, address: payload.address },
+            1 => Self::CreateAccount { user_id: payload.user_id, manager_id: payload.manager_id },
             _ => return Err(ProgramError::InvalidInstructionData),
         })
     }
