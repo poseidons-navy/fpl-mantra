@@ -1,11 +1,17 @@
 use solana_program::{
     account_info::AccountInfo,
     address_lookup_table::instruction,
-    entrypoint::{self, ProgramResult},
+    entrypoint::ProgramResult,
+    entrypoint,
     msg,
     program_error::ProgramError,
     program_pack::{IsInitialized, Pack, Sealed},
     pubkey::Pubkey,
+};
+
+use crate::{pinstruction::LeagueInstruction, processor::create_account::create_account};
+use crate::processor::{
+    create_account
 };
 
 //Entrypoint is a function call process_instruction
@@ -25,8 +31,12 @@ pub fn process_instruction(
             creator_id,
             league_name,
             events_included,
-        } => create_league(program_id, accounts, league_id, creator_id, league_name, events_included)
-    }
+        } => create_league(program_id, accounts, league_id, creator_id, league_name, events_included),
+        LeagueInstruction::CreateAccount { 
+            user_id, 
+            manager_id 
+        } => create_account(user_id, manager_id, accounts, program_id)
+    };
     msg!("At least this worked!");
     Ok(())
 }
