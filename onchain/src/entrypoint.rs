@@ -1,3 +1,6 @@
+//! Program entrypoint
+#![cfg(not(feature = "no-entrypoint"))]
+
 use crate::processor::create_league::create_league;
 use crate::{pinstruction::LeagueInstruction, processor::create_account::create_account};
 use solana_program::{
