@@ -1,5 +1,5 @@
-use solana_program::program_error::ProgramError;
 use borsh::{BorshDeserialize, BorshSerialize};
+use solana_program::program_error::ProgramError;
 pub enum LeagueInstruction {
     CreateLeague {
         league_id: String,
@@ -12,9 +12,8 @@ pub enum LeagueInstruction {
     CreateAccount {
         user_id: String,
         manager_id: String,
-    }
+    },
 }
-
 
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct LeagueInstructionStruct {
@@ -48,7 +47,10 @@ impl LeagueInstruction {
                 league_name: payload.league_name,
                 events_included: payload.events_included,
             },
-            1 => Self::CreateAccount { user_id: payload.user_id, manager_id: payload.manager_id },
+            1 => Self::CreateAccount {
+                user_id: payload.user_id,
+                manager_id: payload.manager_id,
+            },
             _ => return Err(ProgramError::InvalidInstructionData),
         })
     }
