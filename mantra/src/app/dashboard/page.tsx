@@ -39,19 +39,19 @@ async function DashboardPage() {
         {/* Wallet Section */}
         <div className="flex flex-col w-full space-y-5 ring-1 ring-amber-100 rounded-md shadow-lg px-5 py-5 ">
                 <h2 className='text-xl font-semibold' >
-                    Your Crypto Wallet
+                    Solana Wallet
                 </h2>
                 <div className="grid grid-cols-4 w-full gap-y-4">
                     <div className="col-span-4 flex flex-row items-center justify-between">
-                        {/* <div className="flex flex-row items-center gap-x-5">
-                            <Wallet/>
+                         <div className="flex flex-row items-center gap-x-5">
+                            
                             <span className="font-semibold text-lg">
                                 Current Balance
                             </span>
                         </div>
                         <span>
-                            {balance} Algo | {(balance * 0.14).toFixed(2)} USD
-                        </span> */}
+                            {/*balance*/}1 SOL | {/*(balance * 0.14).toFixed(2)*/}128 USD
+                        </span> 
                     </div>
                     {/* <CopyText
                         className='col-span-4'
@@ -109,7 +109,7 @@ async function DashboardPage() {
             <div className="flex flex-row items-center gap-x-4 w-full">
                     <HistoryIcon stroke='gray' />
                     <h2 className="text-lg font-semibold">
-                        League History
+                        Leagues joined (Live & Completed)
                     </h2>
             </div>
 
