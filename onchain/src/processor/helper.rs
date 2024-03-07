@@ -1,11 +1,9 @@
-use std::borrow::Borrow;
-
 use solana_program::{
     pubkey::Pubkey,
     program_error::ProgramError
 };
 use borsh::BorshDeserialize;
-use crate::state::{Mantra, Account};
+use crate::state::Mantra;
 
 pub fn get_pda_for_accounts(
     program_id: &Pubkey
@@ -38,7 +36,7 @@ pub fn get_mantra_size(mantra: &Mantra) -> usize{
 
     // Get size of all accounts
     for x in mantra.accounts.iter() {
-        mantra_size += ((4 + x.manager_id.len()) + (4 + x.user_id.len()));
+        mantra_size += (4 + x.manager_id.len()) + (4 + x.user_id.len());
     }
 
     mantra_size
