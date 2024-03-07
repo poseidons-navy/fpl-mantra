@@ -1,4 +1,4 @@
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
 dotenv.config();
@@ -20,6 +20,10 @@ export function loadKeyPairFromFile(path: string): Keypair {
         console.log(err);
     }
 }
-export const accountPDAPubKey = new PublicKey("");
-export const programId = "";
-export const connection = new Connection("");
+export const programId = new PublicKey("CghH1z52oAGqLNoKhufggQpXd6NNXTVhxmYbmWY7gvYD");
+let [pda, bump] = PublicKey.findProgramAddressSync(
+    [Buffer.from("accounts")],
+    programId
+);
+export const accountPDAPubKey = pda;
+export const connection = new Connection("http://127.0.0.1:8899");

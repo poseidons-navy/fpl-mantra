@@ -11,9 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@coral-xyz/borsh": "^0.29.0",
     "@solana/web3.js": "^1.90.1"
   },
   "devDependencies": {
+    "borsh": "link:@types/@coral-xyz/borsh",
     "dotenv": "^16.4.5",
     "tsc": "^2.0.4"
   }
