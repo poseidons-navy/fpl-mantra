@@ -13,6 +13,11 @@ pub enum LeagueInstruction {
         user_id: String,
         manager_id: String,
     },
+
+    // Creating League Jackpot wallet
+    CreateLeagueJackpotWallet {
+        league_name: String
+    }
 }
 
 #[derive(BorshDeserialize, BorshSerialize)]
@@ -50,6 +55,9 @@ impl LeagueInstruction {
             1 => Self::CreateAccount {
                 user_id: payload.user_id,
                 manager_id: payload.manager_id,
+            },
+            3 => Self::CreateLeagueJackpotWallet { 
+                league_name: payload.league_name 
             },
             _ => return Err(ProgramError::InvalidInstructionData),
         })
