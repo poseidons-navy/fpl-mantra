@@ -1,4 +1,4 @@
-use borsh::BorshSerialize;
+use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo}, entrypoint::ProgramResult, msg, program::invoke_signed, program_error::ProgramError, pubkey::Pubkey, system_instruction, sysvar::{rent::Rent, Sysvar}
 };
@@ -26,9 +26,30 @@ pub fn create_account(
         return Err(ProgramError::InvalidArgument);
     }
 
+    if pda_account.data_is_empty() {
+        msg!("PDA was not createad, I am now creating it!");
+
+        invoke_signed(
+                    &system_instruction::create_account(
+                    user_account.key,
+                        pda_account.key,
+                        Rent::get()?.minimum_balance(0),
+                        0,
+                        program_id,
+                    ),
+                    &[
+                        user_account.clone(),
+                        pda_account.clone(),
+                        system_program_account.clone(),
+                    ],
+                    &[&["accounts".as_ref(), &[bump_seed]]],
+                )?;
+        msg!("PDA Created");
+    }
+
     msg!("Getting Existing Accounts");
     let mut account_data = helper::my_try_from_slice_unchecked::<Mantra>(&pda_account.data.borrow()).unwrap();
-
+    
     msg!("Adding New Account");
     let new_account = Account {
         user_id,
