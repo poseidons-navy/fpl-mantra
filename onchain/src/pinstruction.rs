@@ -56,7 +56,7 @@ impl LeagueInstruction {
                 user_id: payload.user_id,
                 manager_id: payload.manager_id,
             },
-            3 => Self::CreateLeagueJackpotWallet { 
+            2 => Self::CreateLeagueJackpotWallet { 
                 league_name: payload.league_name 
             },
             _ => return Err(ProgramError::InvalidInstructionData),
