@@ -7,7 +7,7 @@ use solana_program::{
 use crate::processor::helper;
 
 pub fn init_league_jackpot(
-    league_name: &String,
+    league_name: String,
     accounts: &[AccountInfo],
     program_id: &Pubkey
 ) -> ProgramResult {
