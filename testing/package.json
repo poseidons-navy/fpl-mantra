@@ -13,6 +13,7 @@
     "@solana/web3.js": "^1.90.1"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
     "tsc": "^2.0.4"
   }
 }
