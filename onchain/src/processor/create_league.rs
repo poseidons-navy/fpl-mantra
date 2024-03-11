@@ -157,3 +157,77 @@ pub fn deserialize_account_data<T: borsh::BorshDeserialize>(
         Err(_) => Err(ProgramError::InvalidInstructionData),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use {
+        super::*,
+        crate::pinstruction::LeagueInstructionStruct,
+        crate::pstate::LeagueAccountState,
+        borsh::{BorshDeserialize, BorshSerialize},
+        solana_program::instruction::{AccountMeta, Instruction},
+        solana_program::system_program,
+        solana_program_test::*,
+        solana_sdk::{signature::Signer, signer::keypair::Keypair, transaction::Transaction},
+    };
+
+    #[tokio::test]
+    async fn create_league_works() {
+        let instruction_data = LeagueInstructionStruct {
+            league_id: String::from("LeagueID"),
+            creator_id: String::from("CreatorID"),
+            league_name: String::from("League Name"),
+            events_included: 1,
+            user_id: String::from(""),
+            manager_id: String::from(""),
+        };
+        //Serialize the instruction data
+        let mut sink = vec![1];
+        instruction_data.serialize(&mut sink).unwrap();
+        msg!("Sink: {:?}", sink);
+        let program_id = Pubkey::new_unique();
+
+        let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
+            "Mantra",
+            program_id,
+            processor!(crate::entrypoint::process_instruction),
+        )
+        .start()
+        .await;
+        let league_creator = Keypair::new();
+        let (pda,_bump_seed) = generate_pda(&league_creator.pubkey(), &instruction_data.league_id, &program_id);
+        msg!("PDA: {}", pda);
+      
+
+        let mut transaction = Transaction::new_with_payer(
+            &[Instruction {
+                program_id,
+                accounts: vec![
+                    AccountMeta::new(payer.pubkey(), true),
+                    AccountMeta::new(pda, false),
+                    AccountMeta::new(system_program::id(), false),
+                ],
+                data: sink,
+            }],
+            Some(&payer.pubkey()),
+        );
+
+        transaction.sign(&[&payer], recent_blockhash);
+
+        banks_client.process_transaction(transaction).await.unwrap();
+
+        let created_account = banks_client.get_account(pda).await;
+
+        match created_account {
+            Ok(None) => assert_eq!(false, true),
+            Ok(Some(account)) => {
+                let league =
+                    LeagueAccountState::deserialize(&mut account.data.to_vec().as_ref()).unwrap();
+                    msg!("League ID from program: {}", league.league_id);
+                    msg!("League id from instruction: {}", &instruction_data.league_id);
+                assert!(league.league_id== instruction_data.league_id);
+            }
+            Err(_) => assert_eq!(false, true),
+        }
+    }
+}
