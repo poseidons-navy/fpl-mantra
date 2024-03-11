@@ -1,7 +1,7 @@
-import { getLeagueJackpotAccountPubKey, loadKeyPairFromFile, programId } from "./helpers";
+import { connection, getLeagueJackpotAccountPubKey, loadKeyPairFromFile, programId } from "./helpers";
 import dotenv from 'dotenv';
 import { createAccountSchema } from "./structs";
-import { SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { SystemProgram, Transaction, TransactionInstruction, sendAndConfirmTransaction } from "@solana/web3.js";
 dotenv.config();
 
 async function test() {
@@ -49,6 +49,12 @@ async function test() {
             })
         )
         // Send transaction
+        const txHash = await sendAndConfirmTransaction(
+            connection,
+            transaction,
+            [payer]
+        )
+        console.log(`Transaction completed with has ${txHash}`);
     } catch(err) {
         console.log("OHH SHIT! Something ain't right");
         console.log(err);

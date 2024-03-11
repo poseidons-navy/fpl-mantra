@@ -30,10 +30,14 @@ export function getLeagueJackpotAccountPubKey(league_name: string): [PublicKey, 
     return [jackpot, bump];
 }
 
+export function getAccountPubKey(user_id: string, manager_id: string): [PublicKey, number] {
+    let [pda, bump] = PublicKey.findProgramAddressSync(
+        [Buffer.from("accounts"), Buffer.from(user_id), Buffer.from(manager_id)],
+        programId
+    );
+
+    return [pda, bump];
+}
+
 export const programId = new PublicKey(process.env.SOL_PROGRAM_ID);
-let [pda, bump] = PublicKey.findProgramAddressSync(
-    [Buffer.from("accounts")],
-    programId
-);
-export const accountPDAPubKey = pda;
 export const connection = new Connection(process.env.SOL_CONNECTION_URL);

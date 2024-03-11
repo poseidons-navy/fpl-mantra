@@ -4,26 +4,30 @@ import {
     TransactionInstruction,
     sendAndConfirmTransaction
 } from "@solana/web3.js";
-import { loadKeyPairFromFile, programId, connection, accountPDAPubKey } from "./helpers";
+import { loadKeyPairFromFile, programId, connection, getAccountPubKey } from "./helpers";
 import { createAccountSchema } from "./structs";
 
 async function test() {
     try {
         // Get the wallet for local testing
         const payer = loadKeyPairFromFile(process.env.WALLET_PATH);
+        const user_id = "1";
+        const manager_id = "2";
 
         // Instruction data
         const buffer = Buffer.alloc(1000);
         createAccountSchema.encode({
             variant: 1, 
-            user_id: "1", 
-            manager_id: "1",
+            user_id, 
+            manager_id,
             league_id: "",
             creator_id: "",
             events_included: 0,
             league_name: "",
         }, buffer);
-        const instructionBuffer = buffer.slice(0, createAccountSchema.getSpan(buffer))
+        const instructionBuffer = buffer.slice(0, createAccountSchema.getSpan(buffer));
+
+        const accountPDAPubKey = getAccountPubKey(user_id, manager_id)[0];
 
         // Create account transaction
         const transaction = new Transaction();
