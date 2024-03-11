@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use solana_program::{
     account_info::{next_account_info, AccountInfo}, entrypoint::ProgramResult, msg, program::invoke_signed, program_error::ProgramError, pubkey::Pubkey, sysvar::{rent::Rent, Sysvar}, system_instruction
 };
@@ -21,6 +19,7 @@ pub fn init_league_jackpot(
     msg!("Confirm if the provided account is correct");
     let (jackpot_pubkey, bump_seed) = helper::get_league_jackpot_account(league_name.clone(), program_id);
     if jackpot_pubkey != jackpot_account.key.clone() {
+        msg!("Provided Account Is Wrong");
         return Err(ProgramError::InvalidArgument);
     }
 
