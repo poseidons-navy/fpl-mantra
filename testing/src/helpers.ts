@@ -20,10 +20,24 @@ export function loadKeyPairFromFile(path: string): Keypair {
         console.log(err);
     }
 }
-export const programId = new PublicKey("CghH1z52oAGqLNoKhufggQpXd6NNXTVhxmYbmWY7gvYD");
-let [pda, bump] = PublicKey.findProgramAddressSync(
-    [Buffer.from("accounts")],
-    programId
-);
-export const accountPDAPubKey = pda;
-export const connection = new Connection("http://127.0.0.1:8899");
+
+export function getLeagueJackpotAccountPubKey(league_name: string): [PublicKey, number] {
+    let [jackpot, bump] = PublicKey.findProgramAddressSync(
+        [Buffer.from(league_name), Buffer.from("jackpot_account")],
+        programId
+    );
+
+    return [jackpot, bump];
+}
+
+export function getAccountPubKey(user_id: string, manager_id: string): [PublicKey, number] {
+    let [pda, bump] = PublicKey.findProgramAddressSync(
+        [Buffer.from("accounts"), Buffer.from(user_id), Buffer.from(manager_id)],
+        programId
+    );
+
+    return [pda, bump];
+}
+
+export const programId = new PublicKey(process.env.SOL_PROGRAM_ID);
+export const connection = new Connection(process.env.SOL_CONNECTION_URL);
