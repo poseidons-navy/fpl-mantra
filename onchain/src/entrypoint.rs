@@ -16,6 +16,7 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
+    msg!("League program entrypoint. Welcome!");
     //Call unpack to deserialize the instruction data
     let instruction = LeagueInstruction::unpack(instruction_data)?;
     //Match the instruction and call the appropriate function
