@@ -1,6 +1,7 @@
 //! Program entrypoint
 #![cfg(not(feature = "no-entrypoint"))]
 
+use crate::processor::create_competition::create_competition;
 use crate::processor::create_league::create_league;
 use crate::processor::init_league_jackpot::init_league_jackpot;
 use crate::{pinstruction::LeagueInstruction, processor::create_account::create_account};
@@ -39,6 +40,12 @@ pub fn process_instruction(
         LeagueInstruction::CreateLeagueJackpotWallet { 
             league_name 
         } => init_league_jackpot(league_name, accounts, program_id),
+        LeagueInstruction::CreateCompetition { 
+            name, 
+            league_id, 
+            entry_fee, 
+            creator_id 
+        } => create_competition(name, league_id, entry_fee, creator_id, accounts, program_id),
     };
     msg!("At least this worked!");
     Ok(())

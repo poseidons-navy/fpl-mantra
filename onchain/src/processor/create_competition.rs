@@ -100,3 +100,74 @@ pub fn create_competition(
     msg!("Competion Is There");
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use {
+        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signature::Keypair, signer::Signer, system_program, transaction::Transaction}, std::borrow::Borrow
+    };
+
+    #[tokio::test]
+    async fn create_competition_test() {
+        let user_id = String::from("1");
+        let manager_id = String::from("1");
+
+        let instruction_data = LeagueInstructionStruct {
+            league_id: String::from(""),
+            creator_id: String::from(""),
+            league_name: String::from(""),
+            events_included: 0,
+            user_id: user_id.clone(),
+            manager_id: manager_id.clone()
+        };
+
+        // Serialize instructions
+        let mut sink = vec![1];
+        instruction_data.serialize( &mut sink).unwrap();
+        let program_id = Pubkey::new_unique();
+
+        let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
+            "FPL Mantra",
+            program_id,
+            processor!(crate::entrypoint::process_instruction)
+        ).start().await;
+
+        let account = Account {
+            user_id: user_id.clone(),
+            manager_id: manager_id.clone()
+        };
+        let (pda, bump_seed) = helper::get_pda_for_accounts(&account, &program_id);
+
+
+
+        let mut transaction = Transaction::new_with_payer(
+            &[Instruction {
+                program_id,
+                accounts: vec![
+                    AccountMeta::new(payer.pubkey(), true),
+                    AccountMeta::new(pda, false),
+                    AccountMeta::new(system_program::id(), false)
+                ],
+                data: sink
+            }],
+            Some(&payer.pubkey())
+        );
+
+        transaction.sign(&[&payer], recent_blockhash);
+
+        banks_client.process_transaction(transaction).await.unwrap();
+
+        let created_account = banks_client.get_account(pda).await;
+
+        match created_account {
+            Ok(None) => assert_eq!(false, true),
+            Ok(Some(account)) => {
+                let account_data = Account::deserialize(&mut account.data.to_vec().as_ref()).unwrap();
+
+                assert!(account_data.user_id == user_id.clone(), "Account Created With Wrong User ID");
+                assert!(account_data.manager_id == manager_id.clone(), "Account Created With Wrong Manager ID");
+            },
+            Err(_) => assert_eq!(false, true)
+        }
+    }
+}
