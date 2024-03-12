@@ -106,23 +106,28 @@ mod tests {
     use {
         super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signature::Keypair, signer::Signer, system_program, transaction::Transaction}, std::borrow::Borrow
     };
+    use borsh::BorshDeserialize;
 
     #[tokio::test]
     async fn create_competition_test() {
-        let user_id = String::from("1");
-        let manager_id = String::from("1");
+        let name = String::from("Test Competition");
+        let league_id = String::from("none");
+        let entry_fee = 0.0;
+        let creator_id = String::from("1");
 
         let instruction_data = LeagueInstructionStruct {
-            league_id: String::from(""),
-            creator_id: String::from(""),
+            league_id: league_id.clone(),
+            creator_id: creator_id.clone(),
             league_name: String::from(""),
             events_included: 0,
-            user_id: user_id.clone(),
-            manager_id: manager_id.clone()
+            user_id: String::from(""),
+            manager_id: String::from(""),
+            entry_fee: entry_fee.clone(),
+            name: name.clone()
         };
 
         // Serialize instructions
-        let mut sink = vec![1];
+        let mut sink = vec![4];
         instruction_data.serialize( &mut sink).unwrap();
         let program_id = Pubkey::new_unique();
 
@@ -132,11 +137,13 @@ mod tests {
             processor!(crate::entrypoint::process_instruction)
         ).start().await;
 
-        let account = Account {
-            user_id: user_id.clone(),
-            manager_id: manager_id.clone()
+        let competition_test = Competition {
+            members: vec![creator_id.clone()],
+            name: name.clone(),
+            league_id: league_id.clone(),
+            entry_fee: entry_fee.clone(),
         };
-        let (pda, bump_seed) = helper::get_pda_for_accounts(&account, &program_id);
+        let (competition, bump_seed) = helper::get_competition_account(name.clone(), league_id.clone(), &program_id);
 
 
 
@@ -145,7 +152,7 @@ mod tests {
                 program_id,
                 accounts: vec![
                     AccountMeta::new(payer.pubkey(), true),
-                    AccountMeta::new(pda, false),
+                    AccountMeta::new(competition, false),
                     AccountMeta::new(system_program::id(), false)
                 ],
                 data: sink
@@ -157,15 +164,17 @@ mod tests {
 
         banks_client.process_transaction(transaction).await.unwrap();
 
-        let created_account = banks_client.get_account(pda).await;
+        let created_competition = banks_client.get_account(competition).await;
 
-        match created_account {
+        match created_competition {
             Ok(None) => assert_eq!(false, true),
             Ok(Some(account)) => {
-                let account_data = Account::deserialize(&mut account.data.to_vec().as_ref()).unwrap();
+                let competition_account = Competition::deserialize(&mut account.data.to_vec().as_ref()).unwrap();
 
-                assert!(account_data.user_id == user_id.clone(), "Account Created With Wrong User ID");
-                assert!(account_data.manager_id == manager_id.clone(), "Account Created With Wrong Manager ID");
+                assert!(competition_account.members == competition_test.members.clone(), "Competition Created With Wrong Members");
+                assert!(competition_account.entry_fee == competition_test.entry_fee, "Competition Created With Wrong Entry Fee");
+                assert!(competition_account.league_id == competition_test.league_id.clone(), "Competition Created With Wrong League ID");
+                assert!(competition_account.name == competition_test.name, "Competition Created With Wrong Name");
             },
             Err(_) => assert_eq!(false, true)
         }

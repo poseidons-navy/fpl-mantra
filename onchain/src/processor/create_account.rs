@@ -1,7 +1,6 @@
-use borsh::{BorshDeserialize, BorshSerialize};
+use borsh::BorshSerialize;
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
-    borsh1::try_from_slice_unchecked,
     entrypoint::ProgramResult,
     msg,
     program::invoke_signed,
@@ -86,8 +85,9 @@ pub fn create_account(
 #[cfg(test)]
 mod tests {
     use {
-        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signature::Keypair, signer::Signer, system_program, transaction::Transaction}, std::borrow::Borrow
+        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signer::Signer, system_program, transaction::Transaction},
     };
+    use borsh::BorshDeserialize;
 
     #[tokio::test]
     async fn create_account_test() {
@@ -100,7 +100,9 @@ mod tests {
             league_name: String::from(""),
             events_included: 0,
             user_id: user_id.clone(),
-            manager_id: manager_id.clone()
+            manager_id: manager_id.clone(),
+            entry_fee: 0.0,
+            name: String::from("")
         };
 
         // Serialize instructions
@@ -118,7 +120,7 @@ mod tests {
             user_id: user_id.clone(),
             manager_id: manager_id.clone()
         };
-        let (pda, bump_seed) = helper::get_pda_for_accounts(&account, &program_id);
+        let (pda, _) = helper::get_pda_for_accounts(&account, &program_id);
 
 
 
