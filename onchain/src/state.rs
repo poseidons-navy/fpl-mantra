@@ -6,7 +6,7 @@ pub struct Account {
     pub manager_id: String
 }
 
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, PartialEq, Debug)]
 pub struct Competition {
     pub members: Vec<String>,
     pub name: String,

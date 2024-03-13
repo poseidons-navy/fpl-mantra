@@ -24,6 +24,13 @@ pub enum LeagueInstruction {
         league_id: String,
         entry_fee: f64,
         creator_id: String
+    },
+
+    JoinCompetition {
+        name: String,
+        league_id: String,
+        user_id: String,
+        manager_id: String
     }
 }
 
@@ -73,6 +80,12 @@ impl LeagueInstruction {
                 league_id: payload.league_id, 
                 entry_fee: payload.entry_fee, 
                 creator_id: payload.creator_id
+            },
+            5 => Self::JoinCompetition { 
+                name: payload.name, 
+                league_id: payload.league_id, 
+                user_id: payload.user_id, 
+                manager_id: payload.manager_id 
             },
             _ => return Err(ProgramError::InvalidInstructionData),
         })
