@@ -121,7 +121,7 @@ pub fn join_competition(
 #[cfg(test)]
 mod tests {
     use {
-        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest, ProgramTestBanksClientExt}, solana_sdk::{signature::Keypair, signer::Signer, system_program, transaction::Transaction},
+        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest, ProgramTestBanksClientExt}, solana_sdk::{signer::Signer, system_program, transaction::Transaction},
     };
     use borsh::BorshDeserialize;
 
