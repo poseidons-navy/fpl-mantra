@@ -129,7 +129,6 @@ mod tests {
     async fn join_competition_test() {
         let user_id = String::from("1");
         let manager_id = String::from("1");
-        let tester = Keypair::new();
 
         let mut instruction_data = LeagueInstructionStruct {
             league_id: String::from(""),
