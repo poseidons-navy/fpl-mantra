@@ -13,10 +13,32 @@ pub enum LeagueInstruction {
         user_id: String,
         manager_id: String,
     },
+
     JoinLeague {
         league_id: String,
         user_id: String,
     },
+
+
+    // Creating League Jackpot wallet
+    CreateLeagueJackpotWallet {
+        league_name: String
+    },
+
+    CreateCompetition {
+        name: String,
+        league_id: String,
+        entry_fee: f64,
+        creator_id: String
+    },
+
+    JoinCompetition {
+        name: String,
+        league_id: String,
+        user_id: String,
+        manager_id: String
+    }
+
 }
 
 #[derive(BorshDeserialize, BorshSerialize)]
@@ -27,6 +49,8 @@ pub struct LeagueInstructionStruct {
     pub events_included: u8,
     pub user_id: String,
     pub manager_id: String,
+    pub entry_fee: f64,
+    pub name: String,
 }
 
 // Implement the unpacking of the instruction data
@@ -55,9 +79,26 @@ impl LeagueInstruction {
                 user_id: payload.user_id,
                 manager_id: payload.manager_id,
             },
+
             3 => Self::JoinLeague {
                 league_id: payload.league_id,
-                user_id: payload.user_id,
+                user_id: payload.user_id},
+
+            2 => Self::CreateLeagueJackpotWallet { 
+                league_name: payload.league_name 
+            },
+            4 => Self::CreateCompetition { 
+                name: payload.name, 
+                league_id: payload.league_id, 
+                entry_fee: payload.entry_fee, 
+                creator_id: payload.creator_id
+            },
+            5 => Self::JoinCompetition { 
+                name: payload.name, 
+                league_id: payload.league_id, 
+                user_id: payload.user_id, 
+                manager_id: payload.manager_id 
+
             },
             _ => return Err(ProgramError::InvalidInstructionData),
         })

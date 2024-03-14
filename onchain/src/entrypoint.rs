@@ -1,9 +1,11 @@
 //! Program entrypoint
 #![cfg(not(feature = "no-entrypoint"))]
 
+use crate::processor::create_competition::create_competition;
 use crate::processor::create_league::create_league;
+
 use crate::processor::join_league::join_league;
-use crate::{pinstruction::LeagueInstruction, processor::create_account::create_account};
+use crate::processor::join_competition::join_competition;
 use solana_program::{
     account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, msg, pubkey::Pubkey,
 };
@@ -37,9 +39,27 @@ pub fn process_instruction(
             user_id,
             manager_id,
         } => create_account(user_id, manager_id, accounts, program_id),
+
         LeagueInstruction::JoinLeague { league_id, user_id } => {
             join_league(program_id, accounts, league_id, user_id)
-        }
+        },
+
+        LeagueInstruction::CreateLeagueJackpotWallet { 
+            league_name 
+        } => init_league_jackpot(league_name, accounts, program_id),
+        LeagueInstruction::CreateCompetition { 
+            name, 
+            league_id, 
+            entry_fee, 
+            creator_id 
+        } => create_competition(name, league_id, entry_fee, creator_id, accounts, program_id),
+        LeagueInstruction::JoinCompetition { 
+            name, 
+            league_id, 
+            user_id, 
+            manager_id 
+        } => join_competition(name, league_id, user_id, manager_id, accounts, program_id),
+
     };
     msg!("At least this worked!");
     Ok(())

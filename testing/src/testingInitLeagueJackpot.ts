@@ -1,34 +1,31 @@
-import {
-    SystemProgram,
-    Transaction,
-    TransactionInstruction,
-    sendAndConfirmTransaction
-} from "@solana/web3.js";
-import { loadKeyPairFromFile, programId, connection, getAccountPubKey } from "./helpers";
+import { connection, getLeagueJackpotAccountPubKey, loadKeyPairFromFile, programId } from "./helpers";
+import dotenv from 'dotenv';
 import { createAccountSchema } from "./structs";
+import { SystemProgram, Transaction, TransactionInstruction, sendAndConfirmTransaction } from "@solana/web3.js";
+dotenv.config();
 
 async function test() {
     try {
-        // Get the wallet for local testing
+        // Get wallet for someone who wants to create league jackpot
+        const league_name = "Test League";
+        const league_jackpot_account = getLeagueJackpotAccountPubKey(league_name)[0];
         const payer = loadKeyPairFromFile(process.env.WALLET_PATH);
-        const user_id = "1";
-        const manager_id = "2";
 
+        // Make transaction
+        
         // Instruction data
         const buffer = Buffer.alloc(1000);
         createAccountSchema.encode({
-            variant: 1, 
-            user_id, 
-            manager_id,
+            variant: 2,
+            user_id: "",
+            manager_id: "",
             league_id: "",
             creator_id: "",
             events_included: 0,
-            league_name: "",
+            league_name: league_name,
         }, buffer);
-        const instructionBuffer = buffer.slice(0, createAccountSchema.getSpan(buffer));
-
-        const accountPDAPubKey = getAccountPubKey(user_id, manager_id)[0];
-
+        const instructionBuffer = buffer.slice(0, createAccountSchema.getSpan(buffer))
+        
         // Create account transaction
         const transaction = new Transaction();
         transaction.add(
@@ -41,26 +38,25 @@ async function test() {
                     }, {
                         isSigner: false,
                         isWritable: true,
-                        pubkey: accountPDAPubKey
+                        pubkey: league_jackpot_account,
                     }, {
                         isSigner: false,
-                        isWritable: true,
+                        isWritable: false,
                         pubkey: SystemProgram.programId
                     }],
                 programId: programId,
                 data: instructionBuffer
             })
         )
-
-        // Run
+        // Send transaction
         const txHash = await sendAndConfirmTransaction(
             connection,
             transaction,
             [payer]
         )
         console.log(`Transaction completed with has ${txHash}`);
-    } catch (err) {
-        console.log("OOPS! Something ain't right");
+    } catch(err) {
+        console.log("OHH SHIT! Something ain't right");
         console.log(err);
     }
 }
