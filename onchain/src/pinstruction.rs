@@ -13,6 +13,10 @@ pub enum LeagueInstruction {
         user_id: String,
         manager_id: String,
     },
+    JoinLeague {
+        league_id: String,
+        user_id: String,
+    },
 }
 
 #[derive(BorshDeserialize, BorshSerialize)]
@@ -50,6 +54,10 @@ impl LeagueInstruction {
             1 => Self::CreateAccount {
                 user_id: payload.user_id,
                 manager_id: payload.manager_id,
+            },
+            3 => Self::JoinLeague {
+                league_id: payload.league_id,
+                user_id: payload.user_id,
             },
             _ => return Err(ProgramError::InvalidInstructionData),
         })
