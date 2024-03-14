@@ -52,7 +52,7 @@ pub fn init_league_jackpot(
 mod tests {
     use {
         borsh::BorshSerialize,
-        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signature::Keypair, signer::Signer, system_program, transaction::Transaction}, std::borrow::Borrow
+        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signer::Signer, system_program, transaction::Transaction},
     };
 
     #[tokio::test]
@@ -65,7 +65,9 @@ mod tests {
             league_name: league_name.clone(),
             events_included: 0,
             user_id: String::from(""),
-            manager_id: String::from("")
+            manager_id: String::from(""),
+            entry_fee: 0.0,
+            name: String::from("")
         };
 
         // Serialize instructions
@@ -79,7 +81,7 @@ mod tests {
             processor!(crate::entrypoint::process_instruction)
         ).start().await;
 
-        let (pda, bump_seed) = helper::get_league_jackpot_account(league_name.clone(), &program_id);
+        let (pda, _) = helper::get_league_jackpot_account(league_name.clone(), &program_id);
 
         let mut transaction = Transaction::new_with_payer(
             &[Instruction {
@@ -102,7 +104,7 @@ mod tests {
 
         match created_account {
             Ok(None) => assert_eq!(false, true),
-            Ok(Some(account)) => {
+            Ok(Some(_)) => {
                 assert_eq!(true, true);
             }
             // Ok(Some(account)) => {
