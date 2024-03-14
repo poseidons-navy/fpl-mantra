@@ -201,6 +201,8 @@ mod tests {
             events_included: 1,
             user_id: String::from(""),
             manager_id: String::from(""),
+            entry_fee: 0,
+            name: String::from(""),
         };
         //Serialize the instruction data
         let mut sink = vec![0];

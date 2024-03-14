@@ -108,6 +108,8 @@ mod tests {
             events_included: 1,
             user_id: String::from("UserID"),
             manager_id: String::from(""),
+            entry_fee: 0,
+            name: String::from(""),
         };
         // Create vessel
         let mut sink = vec![0];
