@@ -101,7 +101,7 @@ mod tests {
             events_included: 0,
             user_id: user_id.clone(),
             manager_id: manager_id.clone(),
-            entry_fee: 0.0,
+            entry_fee: 0,
             name: String::from("")
         };
 

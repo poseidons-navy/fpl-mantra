@@ -25,6 +25,18 @@ pub fn get_competition_account(
     (competition, bump_seed)
 }
 
+pub fn get_competition_jackpot_account(
+    name: String,
+    league_id: String,
+    program_id: &Pubkey
+) -> (Pubkey, u8) {
+    let (competition_jackpot, bump_seed) = Pubkey::find_program_address(
+        &[league_id.as_bytes().as_ref(), "community_jackpot".as_bytes().as_ref(), name.as_bytes().as_ref()], 
+        program_id
+    );
+    (competition_jackpot, bump_seed)
+}
+
 pub fn get_league_jackpot_account(
     league_name: String,
     program_id: &Pubkey

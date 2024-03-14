@@ -27,6 +27,7 @@ pub fn join_competition(
     let competition_account = next_account_info(accounts_iter)?;
     let user_account = next_account_info(accounts_iter)?;
     let league_account = next_account_info(accounts_iter)?;
+    let competition_jackpot_account = next_account_info(accounts_iter)?;
     
     // Check if user was created
     let account = Account {
@@ -85,6 +86,7 @@ pub fn join_competition(
 
     // Add user to commuinity
     let mut competition = try_from_slice_unchecked::<Competition>(&competition_account.data.borrow()).unwrap();
+    let entry_fee = competition.entry_fee;
     msg!("Adding member to competition");
     competition.members.push(user_id.clone());
 
@@ -114,7 +116,20 @@ pub fn join_competition(
     // Save changes in account
     msg!("Saving Competition");
     competition.serialize(&mut &mut competition_account.data.borrow_mut()[..])?;
-    msg!("Done");
+    
+    // Charging entry fee to competitor
+    let (competition_jackpot, bump) = helper::get_competition_jackpot_account(name.clone(), league_id.clone(), program_id);
+    if competition_jackpot != competition_jackpot_account.key.clone() {
+        msg!("Competition Jackpot Account Passed Is Wrong!");
+        return Err(ProgramError::InvalidArgument);
+    }
+
+    msg!("Funding Competition Jackpot Account");
+    invoke_signed(
+        &system_instruction::transfer(member_account.key, competition_jackpot_account.key, entry_fee.clone()),
+        &[member_account.clone(), competition_jackpot_account.clone()],
+        &[&[league_id.as_bytes().as_ref(), "community_jackpot".as_bytes().as_ref(), name.as_bytes().as_ref(), &[bump]]],
+    )?;
     Ok(())
 }
 
@@ -137,7 +152,7 @@ mod tests {
             events_included: 0,
             user_id: user_id.clone(),
             manager_id: manager_id.clone(),
-            entry_fee: 0.0,
+            entry_fee: 0,
             name: String::from("")
         };
 
@@ -188,7 +203,7 @@ mod tests {
             events_included: 0,
             user_id: user_id2.clone(),
             manager_id: manager_id2.clone(),
-            entry_fee: 0.0,
+            entry_fee: 0,
             name: String::from("")
         };
 
@@ -226,7 +241,7 @@ mod tests {
         // Create competition
         let name = String::from("Test Competition");
         let league_id = String::from("none");
-        let entry_fee = 60.0;
+        let entry_fee = 100;
         let creator_id = user_id.clone();
 
         instruction_data = LeagueInstructionStruct {
@@ -249,7 +264,7 @@ mod tests {
             &program_id
         );
         let (competition, _) = helper::get_competition_account(name.clone(), league_id.clone(), &program_id);
-
+        let (competition_jackpot, _) = helper::get_competition_jackpot_account(name.clone(), league_id.clone(), &program_id);
 
         transaction = Transaction::new_with_payer(
             &[Instruction {
@@ -258,6 +273,7 @@ mod tests {
                     AccountMeta::new(payer.pubkey(), true),
                     AccountMeta::new(competition, false),
                     AccountMeta::new(league, false),
+                    AccountMeta::new(competition_jackpot, false),
                     AccountMeta::new(system_program::id(), false)
                 ],
                 data: sink
@@ -300,6 +316,7 @@ mod tests {
                     AccountMeta::new(competition, false),
                     AccountMeta::new(pda2, false),
                     AccountMeta::new(league, false),
+                    AccountMeta::new(competition_jackpot, false),
                 ],
                 data: sink
             }],

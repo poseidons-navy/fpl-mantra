@@ -66,7 +66,7 @@ mod tests {
             events_included: 0,
             user_id: String::from(""),
             manager_id: String::from(""),
-            entry_fee: 0.0,
+            entry_fee: 0,
             name: String::from("")
         };
 
