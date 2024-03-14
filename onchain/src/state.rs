@@ -11,5 +11,5 @@ pub struct Competition {
     pub members: Vec<String>,
     pub name: String,
     pub league_id: String,
-    pub entry_fee: f64
+    pub entry_fee: u64
 }

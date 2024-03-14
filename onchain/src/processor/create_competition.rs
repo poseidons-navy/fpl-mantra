@@ -17,7 +17,7 @@ use crate::state::Competition;
 pub fn create_competition(
     name: String,
     league_id: String,
-    entry_fee: f64,
+    entry_fee: u64,
     creator_id: String,
     accounts: &[AccountInfo],
     program_id: &Pubkey,
@@ -27,6 +27,7 @@ pub fn create_competition(
     let creator_account = next_account_info(accounts_iter)?;
     let competition_account = next_account_info(accounts_iter)?;
     let league_account = next_account_info(accounts_iter)?;
+    let competition_jackpot_account = next_account_info(accounts_iter)?;
     let system_program = next_account_info(accounts_iter)?;
 
     if league_id.clone() != String::from("none") {
@@ -119,6 +120,44 @@ pub fn create_competition(
     competition.serialize(&mut &mut competition_account.data.borrow_mut()[..])?;
 
     msg!("Competion Is There");
+
+    msg!("Creating Account To Hold Competition Jackpot");
+    msg!("Confirm if the provided competition jackpot account is correct");
+    let (competition_jackpot, bump_seed) = helper::get_competition_jackpot_account(name.clone(), league_id.clone() ,program_id);
+    if competition_jackpot != competition_jackpot_account.key.clone() {
+        msg!("Provided Competition Jackpot Account Is Wrong");
+        return Err(ProgramError::InvalidArgument);
+    }
+
+    msg!("Check if the jackpot had already been created");
+    if competition_jackpot_account.data_is_empty() {
+        msg!("Jackpot account had not been created, creating account");
+
+        invoke_signed(
+                    &system_instruction::create_account(
+                        creator_account.key,
+                        competition_jackpot_account.key,
+                        Rent::get()?.minimum_balance(0),
+                        0,
+                        program_id,
+                    ),
+                    &[
+                        creator_account.clone(),
+                        competition_jackpot_account.clone(),
+                        system_program.clone(),
+                    ],
+                    &[&[league_id.as_bytes().as_ref(), "community_jackpot".as_bytes().as_ref(), name.as_bytes().as_ref(), &[bump_seed]]],
+                )?;
+    }
+    
+    msg!("Competition Jackpot Account Has Been Created");
+    msg!("Funding Competition Jackpot Account");
+    invoke_signed(
+        &system_instruction::transfer(creator_account.key, competition_jackpot_account.key, entry_fee.clone()),
+        &[creator_account.clone(), competition_jackpot_account.clone()],
+        &[&[league_id.as_bytes().as_ref(), "community_jackpot".as_bytes().as_ref(), name.as_bytes().as_ref(), &[bump_seed]]],
+    )?;
+
     Ok(())
 }
 
@@ -133,7 +172,7 @@ mod tests {
     async fn create_global_competition_test() {
         let name = String::from("Test Competition");
         let league_id = String::from("none");
-        let entry_fee = 0.0;
+        let entry_fee = 100;
         let creator_id = String::from("1");
 
         let instruction_data = LeagueInstructionStruct {
@@ -169,6 +208,7 @@ mod tests {
             &["leagues".as_bytes().as_ref(), league_id.as_bytes().as_ref()], 
             &program_id
         );
+        let (competition_jackpot, _) = helper::get_competition_jackpot_account(name.clone(), league_id.clone(), &program_id);
 
 
         let mut transaction = Transaction::new_with_payer(
@@ -178,6 +218,7 @@ mod tests {
                     AccountMeta::new(payer.pubkey(), true),
                     AccountMeta::new(competition, false),
                     AccountMeta::new(league, false),
+                    AccountMeta::new(competition_jackpot, false),
                     AccountMeta::new(system_program::id(), false)
                 ],
                 data: sink
@@ -209,7 +250,7 @@ mod tests {
     async fn create_league_competition_test() {
         let league_name = String::from("TestLeague");
         let league_id = String::from("1");
-        let entry_fee = 0.0;
+        let entry_fee = 100;
         let mut creator_id = String::from("1");
         let events_included: u8 = 1;
 
@@ -239,6 +280,7 @@ mod tests {
             &["leagues".as_bytes().as_ref(), league_id.as_bytes().as_ref()], 
             &program_id
         );
+        
 
         let mut transaction = Transaction::new_with_payer(
             &[Instruction {
@@ -284,8 +326,7 @@ mod tests {
             entry_fee: entry_fee.clone(),
         };
         let (competition, _) = helper::get_competition_account(name.clone(), league_id.clone(), &program_id);
-        
-
+        let (competition_jackpot, _) = helper::get_competition_jackpot_account(name.clone(), league_id.clone(), &program_id);
 
         transaction = Transaction::new_with_payer(
             &[Instruction {
@@ -294,6 +335,7 @@ mod tests {
                     AccountMeta::new(payer.pubkey(), true),
                     AccountMeta::new(competition, false),
                     AccountMeta::new(league, false),
+                    AccountMeta::new(competition_jackpot, false),
                     AccountMeta::new(system_program::id(), false)
                 ],
                 data: sink

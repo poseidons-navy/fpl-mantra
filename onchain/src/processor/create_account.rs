@@ -70,7 +70,7 @@ pub fn create_account(
         invoke_signed(
             &system_instruction::transfer(user_account.key, pda_account.key, lamports_to_be_paid),
             &[user_account.clone(), pda_account.clone()],
-            &[&["account".as_ref(), &[bump_seed]]],
+            &[&["accounts".as_bytes().as_ref(), account.user_id.as_bytes().as_ref(), account.manager_id.as_bytes().as_ref(), &[bump_seed]]],
         )?;
     }
 
@@ -101,7 +101,7 @@ mod tests {
             events_included: 0,
             user_id: user_id.clone(),
             manager_id: manager_id.clone(),
-            entry_fee: 0.0,
+            entry_fee: 0,
             name: String::from("")
         };
 
