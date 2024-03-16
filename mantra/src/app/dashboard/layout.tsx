@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavigationLink from "@/components/ui/navigation-link";
 import { Medal, Star, CandlestickChart, KeyIcon,Heart, LibrarySquare, LogOut, PackageOpen, StoreIcon, UserIcon, Users} from "lucide-react";
@@ -6,7 +6,7 @@ import { signOut, useSession } from "next-auth/react";
 import { ReactNode } from "react";
 import DashboardTopBar from "./components/topbar";
 import { QuestionMarkIcon } from "@radix-ui/react-icons";
-
+import WalletContextProvider from "@/components/wallet/WalletContextProvider";
 
 interface Props {
     children: ReactNode
@@ -44,14 +44,16 @@ export default function DashboardLayout(props: Props){
                     />
                                        
                 </div>
-
+                <WalletContextProvider>
                 {/* Main Content */}
                 <div className="flex flex-col items-center justify-start col-span-4 w-full h-screen relative ">
                     {<DashboardTopBar/>}
                     <div className="flex flex-col pt-5 px-5 w-full h-full overflow-y-scroll">
+                        
                         {children}
                     </div>
                 </div>
+                </WalletContextProvider>
             </div>
 
     )
