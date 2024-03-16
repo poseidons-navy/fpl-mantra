@@ -21,7 +21,7 @@ export default function Home() {
           </div>
           <p className='max-w-md text-sm md:text-base text-zinc-500'>FPL Mantra is a platform that allows users to win prizes from league tournaments they set on fpl league.</p>
           <div className='w-full flex items-center justify-center md:justify-start gap-4'>
-            <Link href="/dashboard"><button className='w-48 h-12 text-sm sm:text-base rounded bg-white text-black hover:bg-fuchsia-700 hover:text-white transition-colors'>Join Now!</button></Link>
+            <Link href="/dashboard"><button className='w-48 h-12 text-sm sm:text-base rounded bg-black text-white hover:bg-sky-200 hover:text-black transition-colors'>Join Now!</button></Link>
             <p className='max-w-md text-sm md:text-base text-zinc-500'>Already have an account? <Link className="text-black hover:text-fuchsia-700 " href="/dashboard">Log in</Link></p>
           </div>
         </div>
