@@ -2,10 +2,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import background from "../../public/stadium.png"
+import WalletContextProvider from "@/components/wallet/WalletContextProvider";
 
 export default function Home() {
   return (
      <main className="flex max-h-screen flex-col items-center justify-center relative p-24">
+      {/* <WalletContextProvider> */}
       <div className="absolute inset-0 z-0">
         <Image 
           src={background}
@@ -32,7 +34,7 @@ export default function Home() {
 
       </header>
 
-     
+      {/* </WalletContextProvider> */}
     </main>
 
   );
