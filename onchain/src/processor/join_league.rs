@@ -107,15 +107,49 @@ mod tests {
     async fn add_member_works() {
         let instruction_data = LeagueInstructionStruct {
             league_id: String::from("LeagueID"),
-            creator_id: String::from(""),
-            league_name: String::from(""),
+            creator_id: String::from("CreatorID"),
+            league_name: String::from("League Name"),
             events_included: 1,
             user_id: String::from("UserID"),
             manager_id: String::from(""),
             entry_fee: 0,
             name: String::from(""),
         };
-        // Create vessel
+        //Create league
+        let mut sink = vec![0];
+        instruction_data.serialize(&mut sink).unwrap();
+
+        let program_id = Pubkey::new_unique();
+
+        let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
+            "Mantra",
+            program_id,
+            processor!(crate::entrypoint::process_instruction),
+        )
+        .start()
+        .await;
+        let league_creator = Keypair::new();
+        let (pda, _bump_seed) = generate_pda(&instruction_data.league_id, &program_id);
+
+        let mut transaction = Transaction::new_with_payer(
+            &[Instruction {
+                program_id,
+                accounts: vec![
+                    AccountMeta::new(payer.pubkey(), true),
+                    AccountMeta::new(pda, false),
+                    AccountMeta::new(system_program::id(), false),
+                ],
+                data: sink,
+            }],
+            Some(&payer.pubkey()),
+        );
+
+        transaction.sign(&[&payer], recent_blockhash);
+
+        banks_client.process_transaction(transaction).await.unwrap();
+
+
+        // Add member
         let mut sink = vec![3];
         instruction_data.serialize(&mut sink).unwrap();
         let program_id = Pubkey::new_unique();
@@ -164,7 +198,7 @@ mod tests {
                     league.league_name
                 );
 
-                // See if the write member was created
+                // See if the right member was created
                 let mut found = false;
                 for x in league.league_members {
                     if x == instruction_data.user_id {

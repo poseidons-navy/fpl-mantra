@@ -82,28 +82,13 @@ pub fn create_league(
         ]],
     )?;
     msg!("Supposed to deserialize");
-    //Deserializing the account data
-    // let mut pda_account_data =
-    //     match try_from_slice_unchecked::<LeagueAccountState>(&pda_account.data.borrow()) {
-    //         Ok(data) => data,
-    //         Err(e) => {
-    //             msg!("Error: {:?}", e);
-    //             return Err(ProgramError::InvalidAccountData);
-    //         }
-    //     };
-
-    // pda_account_data.league_id = default_league.league_id;
-    // pda_account_data.creator_id = default_league.creator_id;
-    // pda_account_data.league_name = default_league.league_name;
-    // pda_account_data.events_included = default_league.events_included;
-    // pda_account_data.league_members = default_league.league_members;
 
     //Serialize the account data
     msg!("Serializing the account data");
     pda_account.realloc(account_len, false)?;
     msg!("Reallocating the account");
     default_league.serialize(&mut &mut pda_account.data.borrow_mut()[..])?;
-    msg!("Reached the end");
+    msg!("League created.");
     Ok(())
 }
 
@@ -135,49 +120,6 @@ pub fn get_league_size(league: &LeagueAccountState) -> usize {
         + league_members_size;
     size
 }
-
-// /***
-//  * Invoke signed transaction
-//  */
-// pub fn invoke_signed_transaction(
-//     instruction: &Instruction,
-//     account_info: &[AccountInfo],
-//     league_creator: &Pubkey,
-//     league_id: &String,
-//     bump_seed: u8,
-// ) -> ProgramResult {
-//     msg!("Invoking signed transaction");
-//     match invoke_signed(
-//         &instruction,
-//         account_info,
-//         &[&[
-//             league_creator.as_ref(),
-//             &league_id.as_bytes().as_ref(),
-//             &[bump_seed],
-//         ]],
-//     ) {
-//         Ok(_) => Ok(()),
-//         Err(e) => {
-//             msg!("Error: {:?}", e);
-//             Err(e)
-//         }
-//     }
-// }
-
-// /**
-//  * Deserialize account data
-//  */
-// pub fn deserialize_account_data<T: BorshDeserialize>(data: &[u8]) -> Result<T, ProgramError> {
-//     msg!("Deserializing function called");
-//     let mut mutable_data = data;
-//     match T::deserialize(&mut mutable_data) {
-//         Ok(data) => Ok(data),
-//         Err(e) => {
-//             msg!("Error: {:?}", e);
-//             Err(ProgramError::InvalidInstructionData)
-//         }
-//     }
-// }
 
 #[cfg(test)]
 mod tests {
