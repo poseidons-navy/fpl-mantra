@@ -45,7 +45,7 @@ pub fn create_league(
         creator_id: creator_id.clone(),
         league_name: league_name.clone(),
         events_included: events_included.clone(),
-        league_members: Vec::new(),
+        league_members: vec![creator_id.clone()],
     };
     msg!("Space succesfully allocated");
     //Calculating rent
@@ -82,21 +82,6 @@ pub fn create_league(
         ]],
     )?;
     msg!("Supposed to deserialize");
-    //Deserializing the account data
-    // let mut pda_account_data =
-    //     match try_from_slice_unchecked::<LeagueAccountState>(&pda_account.data.borrow()) {
-    //         Ok(data) => data,
-    //         Err(e) => {
-    //             msg!("Error: {:?}", e);
-    //             return Err(ProgramError::InvalidAccountData);
-    //         }
-    //     };
-
-    // pda_account_data.league_id = default_league.league_id;
-    // pda_account_data.creator_id = default_league.creator_id;
-    // pda_account_data.league_name = default_league.league_name;
-    // pda_account_data.events_included = default_league.events_included;
-    // pda_account_data.league_members = default_league.league_members;
 
     //Serialize the account data
     msg!("Serializing the account data");

@@ -92,7 +92,7 @@ pub fn create_competition(
     let mut members = Vec::new();
     members.push(creator_id.clone());
     let competition = Competition {
-        members,
+        members: vec![creator_id.clone()],
         name: name.clone(),
         league_id: league_id.clone(),
         entry_fee: entry_fee.clone()
@@ -164,7 +164,7 @@ pub fn create_competition(
 #[cfg(test)]
 mod tests {
     use {
-        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signer::Signer, system_program, transaction::Transaction},
+        super::*, crate::{pinstruction::LeagueInstructionStruct, processor::create_league::generate_pda}, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signer::Signer, system_program, transaction::Transaction},
     };
     use borsh::BorshDeserialize;
 
@@ -204,10 +204,7 @@ mod tests {
             entry_fee: entry_fee.clone(),
         };
         let (competition, _) = helper::get_competition_account(name.clone(), league_id.clone(), &program_id);
-        let (league, _) = Pubkey::find_program_address(
-            &["leagues".as_bytes().as_ref(), league_id.as_bytes().as_ref()], 
-            &program_id
-        );
+        let (league, _) = generate_pda(&league_id, &program_id);
         let (competition_jackpot, _) = helper::get_competition_jackpot_account(name.clone(), league_id.clone(), &program_id);
 
 
@@ -276,10 +273,7 @@ mod tests {
             processor!(crate::entrypoint::process_instruction)
         ).start().await;
 
-        let (league, _) = Pubkey::find_program_address(
-            &["leagues".as_bytes().as_ref(), league_id.as_bytes().as_ref()], 
-            &program_id
-        );
+        let (league, _) = generate_pda(&league_id, &program_id);
         
 
         let mut transaction = Transaction::new_with_payer(
