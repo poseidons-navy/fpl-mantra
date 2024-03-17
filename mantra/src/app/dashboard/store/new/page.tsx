@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import * as web3 from "@solana/web3.js";
 
 const formSchema = z.object({
     name: z.string(),
@@ -30,7 +32,10 @@ function CreateLeague() {
     const form = useForm<Schema>({
         resolver: zodResolver(formSchema)
     })
-
+    const onButtonClick = (event: any)=>{
+        event.preventDefault();
+      
+      }
 
     return (
         <div className="flex flex-col w-full h-full items-center  justify-center ">

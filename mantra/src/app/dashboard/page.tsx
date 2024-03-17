@@ -27,23 +27,9 @@ import {
 import { Input } from "@/components/ui/input";
 
 
+
 async function DashboardPage() {
-  //const session = await getServerAuthSession()
-  //const user = session?.user
-  // let leagueHistory: Array<any> = [];
-  // let balance = 0;
-  // if(isNull(user?.walletAddress)) {
-  //     return <Redirect
-  //         link='/setup-wallet'
-  //     />
-  // }
-
-  try {
-    //leagueHistory = await getleagues(undefined, "published");
-    // balance = await fetchBalance();
-    // balance = balance / 1_000_000
-  } catch (e) {}
-
+ 
   return (
     <div className="flex flex-col items-center justify-center w-full space-y-10 px-2 pb-[100px]">
       {/* Wallet Section */}
