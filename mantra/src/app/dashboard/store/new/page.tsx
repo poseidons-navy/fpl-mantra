@@ -70,7 +70,7 @@ function CreateLeague() {
                                 return (
                                     <FormItem>
                                         <FormLabel>
-                                            Brief Description
+                                            **Brief Description
                                         </FormLabel>
                                         <FormControl>
                                             <Textarea /*{...field}*/ placeholder='Description' className='h-[100px]' />
