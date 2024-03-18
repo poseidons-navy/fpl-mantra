@@ -2,6 +2,7 @@ use crate::pstate::LeagueAccountState;
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
+    borsh1::try_from_slice_unchecked,
     entrypoint::ProgramResult,
     instruction::Instruction,
     msg,
@@ -11,7 +12,6 @@ use solana_program::{
     system_instruction,
     sysvar::{rent::Rent, Sysvar},
 };
-use solana_sdk::borsh1::try_from_slice_unchecked;
 /**
  * Function to create a league
  */
@@ -23,11 +23,6 @@ pub fn create_league(
     league_name: String,
     events_included: u8,
 ) -> ProgramResult {
-    msg!("Instruction: CreateLeague");
-    msg!("League ID: {}", league_id);
-    msg!("Creator ID: {}", creator_id);
-    msg!("League Name: {}", league_name);
-    msg!("Events Included: {}", events_included);
     msg!("Create League");
 
     //Iterate through accounts
@@ -45,8 +40,9 @@ pub fn create_league(
         creator_id: creator_id.clone(),
         league_name: league_name.clone(),
         events_included: events_included.clone(),
-        league_members: Vec::new(),
+        league_members: vec![creator_id.clone()],
     };
+  
     msg!("Space succesfully allocated");
     //Calculating rent
     let account_len = get_league_size(&default_league);
@@ -59,7 +55,7 @@ pub fn create_league(
     } else {
         msg!("PDA and PDA account are the same");
     }
-
+    msg!("PDA:: {:?}", pda_account);
     msg!("PDA generated");
     //Create new account
     invoke_signed(
@@ -89,6 +85,7 @@ pub fn create_league(
     msg!("Reallocating the account");
     default_league.serialize(&mut &mut pda_account.data.borrow_mut()[..])?;
     msg!("League created.");
+    
     Ok(())
 }
 
