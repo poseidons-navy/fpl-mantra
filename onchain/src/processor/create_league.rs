@@ -2,6 +2,7 @@ use crate::pstate::LeagueAccountState;
 use borsh::{BorshDeserialize, BorshSerialize};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
+    borsh1::try_from_slice_unchecked,
     entrypoint::ProgramResult,
     instruction::Instruction,
     msg,
@@ -11,7 +12,6 @@ use solana_program::{
     system_instruction,
     sysvar::{rent::Rent, Sysvar},
 };
-use solana_sdk::borsh1::try_from_slice_unchecked;
 /**
  * Function to create a league
  */
@@ -23,11 +23,6 @@ pub fn create_league(
     league_name: String,
     events_included: u8,
 ) -> ProgramResult {
-    msg!("Instruction: CreateLeague");
-    msg!("League ID: {}", league_id);
-    msg!("Creator ID: {}", creator_id);
-    msg!("League Name: {}", league_name);
-    msg!("Events Included: {}", events_included);
     msg!("Create League");
 
     //Iterate through accounts
@@ -45,8 +40,9 @@ pub fn create_league(
         creator_id: creator_id.clone(),
         league_name: league_name.clone(),
         events_included: events_included.clone(),
-        league_members: Vec::new(),
+        league_members: vec![creator_id.clone()],
     };
+  
     msg!("Space succesfully allocated");
     //Calculating rent
     let account_len = get_league_size(&default_league);
@@ -59,7 +55,7 @@ pub fn create_league(
     } else {
         msg!("PDA and PDA account are the same");
     }
-
+    msg!("PDA:: {:?}", pda_account);
     msg!("PDA generated");
     //Create new account
     invoke_signed(
@@ -82,28 +78,14 @@ pub fn create_league(
         ]],
     )?;
     msg!("Supposed to deserialize");
-    //Deserializing the account data
-    // let mut pda_account_data =
-    //     match try_from_slice_unchecked::<LeagueAccountState>(&pda_account.data.borrow()) {
-    //         Ok(data) => data,
-    //         Err(e) => {
-    //             msg!("Error: {:?}", e);
-    //             return Err(ProgramError::InvalidAccountData);
-    //         }
-    //     };
-
-    // pda_account_data.league_id = default_league.league_id;
-    // pda_account_data.creator_id = default_league.creator_id;
-    // pda_account_data.league_name = default_league.league_name;
-    // pda_account_data.events_included = default_league.events_included;
-    // pda_account_data.league_members = default_league.league_members;
 
     //Serialize the account data
     msg!("Serializing the account data");
     pda_account.realloc(account_len, false)?;
     msg!("Reallocating the account");
     default_league.serialize(&mut &mut pda_account.data.borrow_mut()[..])?;
-    msg!("Reached the end");
+    msg!("League created.");
+    
     Ok(())
 }
 
@@ -135,49 +117,6 @@ pub fn get_league_size(league: &LeagueAccountState) -> usize {
         + league_members_size;
     size
 }
-
-// /***
-//  * Invoke signed transaction
-//  */
-// pub fn invoke_signed_transaction(
-//     instruction: &Instruction,
-//     account_info: &[AccountInfo],
-//     league_creator: &Pubkey,
-//     league_id: &String,
-//     bump_seed: u8,
-// ) -> ProgramResult {
-//     msg!("Invoking signed transaction");
-//     match invoke_signed(
-//         &instruction,
-//         account_info,
-//         &[&[
-//             league_creator.as_ref(),
-//             &league_id.as_bytes().as_ref(),
-//             &[bump_seed],
-//         ]],
-//     ) {
-//         Ok(_) => Ok(()),
-//         Err(e) => {
-//             msg!("Error: {:?}", e);
-//             Err(e)
-//         }
-//     }
-// }
-
-// /**
-//  * Deserialize account data
-//  */
-// pub fn deserialize_account_data<T: BorshDeserialize>(data: &[u8]) -> Result<T, ProgramError> {
-//     msg!("Deserializing function called");
-//     let mut mutable_data = data;
-//     match T::deserialize(&mut mutable_data) {
-//         Ok(data) => Ok(data),
-//         Err(e) => {
-//             msg!("Error: {:?}", e);
-//             Err(ProgramError::InvalidInstructionData)
-//         }
-//     }
-// }
 
 #[cfg(test)]
 mod tests {
