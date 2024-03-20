@@ -10,7 +10,7 @@ export const accounts = pgTable("accounts", {
 export const leagues = pgTable("leagues", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
-  creator_id: integer("creator_id").notNull().references(() => accounts.id),
+  league_id: integer("league_id").notNull().unique(),
   events_included: integer("events_included").notNull(),
 });
 
