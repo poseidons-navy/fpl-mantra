@@ -56,6 +56,7 @@ export async function joinLeague(league_id: number, member_id: number) {
       .insert(league_members)
       .values([{ league_id, member_id }])
       .execute();
+      
   } catch (err) {
     console.log(err);
 

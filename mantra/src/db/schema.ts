@@ -1,5 +1,5 @@
 import { integer, text, pgTable, serial, primaryKey, real } from "drizzle-orm/pg-core";
-
+//Changed some details- We are using fpl details.
 export const accounts = pgTable("accounts", {
   id: serial("id").primaryKey(),
   manager_id: integer("manager_id").notNull().unique(),
@@ -15,8 +15,8 @@ export const leagues = pgTable("leagues", {
 });
 
 export const league_members = pgTable("league_members", {
-  league_id: integer("league_id").notNull().references(() => leagues.id),
-  member_id: integer("member_id").notNull().references(() => accounts.id),
+  league_id: integer("league_id").notNull().references(() => leagues.league_id),
+  member_id: integer("member_id").notNull().references(() => accounts.manager_id),
 }, (table) =>  {
     return {
       pk: primaryKey({columns: [table.league_id, table.member_id]}),
