@@ -90,8 +90,27 @@ export async function handleCreateLeagueOnchain(
   transaction.add(instruction);
   return transaction;
 }
-export async function handleCreateLeagueFpl(league: League) {
-let has_cup = true;
-let start_event = league.events_included;
-let league_name = league.league_name;
+export async function handleCreateLeagueFpl(
+  has_cup: boolean,
+  start_event: number,
+  league_name: string
+) {
+  const url = "https://fantasy.premierleague.com/api/leagues-classic/";
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        has_cup: has_cup,
+        start_event: start_event,
+        league_name: league_name,
+      }),
+    });
+    return response;
+  } catch (e) {
+    console.log(e);
+    return e;
+  }
 }
