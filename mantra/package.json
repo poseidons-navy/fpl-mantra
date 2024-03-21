@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ngrok": "ngrok http 3000"
   },
   "dependencies": {
+    "@coral-xyz/borsh": "^0.29.0",
     "@hookform/resolvers": "^3.3.4",
     "@neondatabase/serverless": "^0.9.0",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -22,6 +24,7 @@
     "@solana/wallet-adapter-react-ui": "^0.9.35",
     "@solana/wallet-adapter-wallets": "^0.19.32",
     "@splinetool/react-spline": "^2.2.6",
+    "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.30.2",
