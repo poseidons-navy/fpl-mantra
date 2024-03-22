@@ -10,7 +10,7 @@ use solana_program::{
     msg
 };
 
-use crate::{processor::helper, pstate::LeagueAccountState, state::{Account, Competition}};
+use crate::{processor::{create_league::generate_pda, helper}, pstate::LeagueAccountState, state::{Account, Competition}};
 use solana_sdk::borsh1::try_from_slice_unchecked;
 
 pub fn join_competition(
@@ -58,10 +58,7 @@ pub fn join_competition(
         msg!("Competition Belongs To League");
 
         // Check if member is in league
-        let (league, _) = Pubkey::find_program_address(
-            &["leagues".as_bytes().as_ref(), league_id.as_bytes().as_ref()], 
-            program_id
-        );
+        let (league, _) = generate_pda(&league_id, program_id);
 
         if league_account.key.clone() != league {
             msg!("Wrong League Account Created");
@@ -82,6 +79,11 @@ pub fn join_competition(
             msg!("Creator Not Member of League");
             return  Err(ProgramError::InvalidArgument);
         }
+    }
+
+    if competition_account.data_is_empty() {
+        msg!("Seems that Competition Does Not Exist");
+        return Err(ProgramError::InvalidArgument);
     }
 
     // Add user to commuinity
@@ -145,6 +147,7 @@ mod tests {
         let user_id = String::from("1");
         let manager_id = String::from("1");
 
+        // Creating competition creator account
         let mut instruction_data = LeagueInstructionStruct {
             league_id: String::from(""),
             creator_id: String::from(""),
@@ -259,10 +262,7 @@ mod tests {
         let mut sink = vec![4];
         instruction_data.serialize( &mut sink).unwrap();
 
-        let (league, _) = Pubkey::find_program_address(
-            &["leagues".as_bytes().as_ref(), league_id.as_bytes().as_ref()], 
-            &program_id
-        );
+        let (league, _) = generate_pda(&league_id, &program_id);
         let (competition, _) = helper::get_competition_account(name.clone(), league_id.clone(), &program_id);
         let (competition_jackpot, _) = helper::get_competition_jackpot_account(name.clone(), league_id.clone(), &program_id);
 
@@ -312,11 +312,11 @@ mod tests {
             &[Instruction {
                 program_id,
                 accounts: vec![
-                    AccountMeta::new(payer.pubkey(), true),
-                    AccountMeta::new(competition, false),
-                    AccountMeta::new(pda2, false),
-                    AccountMeta::new(league, false),
-                    AccountMeta::new(competition_jackpot, false),
+                    AccountMeta::new(payer.pubkey(), true), // member account
+                    AccountMeta::new(competition, false), // competition account
+                    AccountMeta::new(pda2, false), // member's user account
+                    AccountMeta::new(league, false), // league account
+                    AccountMeta::new(competition_jackpot, false), // competition jackpot
                 ],
                 data: sink
             }],
