@@ -21,18 +21,20 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as web3 from "@solana/web3.js";
 import axios from "axios";
-import { handleCreateLeagueFpl } from "@/utils/create_league";
+import { handleCreateLeagueOnchain, League } from "@/utils/create_league";
+
 const formSchema = z.object({
   name: z.string(),
   description: z.string(),
   teams: z.number(),
   price: z.number(),
+  league_id: z.string(),
+  events_included: z.number(),
 
   // tags: z.string()
 });
@@ -50,11 +52,37 @@ function CreateLeague() {
   });
 
   const onSubmit = async (data: Schema) => {
-    console.log(data);
+    if (!publicKey) {
+      throw new Error("Wallet not connected");
+    }
+    //TODO: Add max_teams to database, add description to database
     try {
-        console.log("We tried");
-      const response = await handleCreateLeagueFpl(true, 1, data.name);
-        console.log(response);
+      const response = await axios.post("/api/create_league", {
+        name: data.name,
+        league_id: data.league_id,
+        description: data.description,
+        teams: data.teams,
+        price: data.price,
+        events_included: data.events_included,
+      });
+      if (response.status === 200) {
+        //Create the league onchain
+        const league = new League(
+          data.league_id,
+          data.name,
+          [],
+          "admin1",
+          data.events_included
+        );
+        const transaction = await handleCreateLeagueOnchain(league, publicKey);
+        //Send the transaction
+        console.log("We are sending the transaction");
+        let txid = await sendTransaction(transaction, connection);
+        console.log(
+          `Transaction submitted: https://explorer.solana.com/tx/${txid}?cluster=devnet`
+        );
+      }
+      console.log(response);
     } catch (e) {
       throw new Error((e as Error).toString());
     }
@@ -79,7 +107,7 @@ function CreateLeague() {
               name="name"
               render={(
                 {
-                  /*field*/
+                 
                 }
               ) => {
                 return (
@@ -90,6 +118,30 @@ function CreateLeague() {
                         /*{...field}*/ placeholder="Name"
                         type="text"
                         {...form.register("name")}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            <FormField
+              control={form.control}
+              name="league_id"
+              render={(
+                {
+                  /*field*/
+                }
+              ) => {
+                return (
+                  <FormItem>
+                    <FormLabel>League id</FormLabel>
+                    <FormControl>
+                      <Input
+                        /*{...field}*/ placeholder="league_id"
+                        type="text"
+                        {...form.register("league_id")}
                       />
                     </FormControl>
                     <FormMessage />
@@ -136,6 +188,30 @@ function CreateLeague() {
                         /*{...field}*/ type="number"
                         placeholder="Number of teams"
                         {...form.register("teams", { valueAsNumber: true })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            <FormField
+              control={form.control}
+              name="events_included"
+              render={(
+                {
+                  /*field*/
+                }
+              ) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Scoring starts</FormLabel>
+                    <FormControl>
+                      <Input
+                        /*{...field}*/ placeholder="events_included"
+                        type="number"
+                        {...form.register("events_included", { valueAsNumber: true })}
                       />
                     </FormControl>
                     <FormMessage />

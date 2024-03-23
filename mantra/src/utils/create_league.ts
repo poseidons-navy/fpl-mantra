@@ -1,10 +1,8 @@
 import * as web3 from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
-class League {
+export class League {
   league_id: string;
   league_name: string;
-  is_initialized: boolean;
-  is_created: boolean;
   league_members: string[];
   creator_id: string;
   events_included: number;
@@ -12,16 +10,12 @@ class League {
   constructor(
     league_id: string,
     league_name: string,
-    is_initialized: boolean,
-    is_created: boolean,
     league_members: string[],
     creator_id: string,
     events_included: number
   ) {
     this.league_id = league_id;
     this.league_name = league_name;
-    this.is_initialized = is_initialized;
-    this.is_created = is_created;
     this.league_members = league_members;
     this.creator_id = creator_id;
     this.events_included = events_included;
@@ -30,8 +24,6 @@ class League {
     borsh.u8("variant"),
     borsh.str("league_id"),
     borsh.str("league_name"),
-    borsh.bool("is_initialized"),
-    borsh.bool("is_created"),
     borsh.vec(borsh.str(), "league_members"),
     borsh.str("creator_id"),
     borsh.u8("events_included"),
@@ -48,7 +40,6 @@ class League {
 export async function handleCreateLeagueOnchain(
   league: League,
   publicKey: web3.PublicKey,
-  connection: web3.Connection
 ): Promise<web3.Transaction> {
   const PROGRAM_ID = "G2abatzkAR2WrDSyABpDVb28Dkk2zxELyaP5jEtmXg35";
   if (!publicKey) {

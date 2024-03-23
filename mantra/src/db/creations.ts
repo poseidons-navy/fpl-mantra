@@ -1,5 +1,30 @@
-import db from "./connection";
-import { accounts, leagues, league_members } from "./schema";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import "dotenv/config";
+import {
+  getFirestore,
+  collection,
+  doc,
+  addDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+console.log(process.env.API_KEY);
+const firebaseConfig = {
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.MEASUREMENT_ID,
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 /**
  *
  * @param manager_id
@@ -12,14 +37,9 @@ export async function createAccounts(
   wallet_address: string
 ) {
   try {
-    const newAccount = await db
-      .insert(accounts)
-      .values([{ manager_id, email, wallet_address }])
-      .execute();
-  } catch (err) {
-    console.log(err);
-
-    throw new Error(err);
+    await addDoc(collection(db, "accounts"), {});
+  } catch (e: any) {
+    throw new Error(e);
   }
 }
 /**
@@ -31,17 +51,23 @@ export async function createAccounts(
 export async function createLeague(
   name: string,
   league_id: number,
+  description: string,
+  teams: number,
+  price: number,
+
   events_included: number
 ) {
   try {
-    const newLeague = await db
-      .insert(leagues)
-      .values([{ name, league_id, events_included }])
-      .execute();
-  } catch (err) {
-    console.log(err);
-
-    throw new Error(err);
+    await addDoc(collection(db, "leagues"), {
+      name,
+      league_id,
+      description,
+      teams,
+      price,
+      events_included,
+    });
+  } catch (e: any) {
+    throw new Error(e);
   }
 }
 
@@ -52,14 +78,8 @@ export async function createLeague(
  */
 export async function joinLeague(league_id: number, member_id: number) {
   try {
-    const newLeagueMember = await db
-      .insert(league_members)
-      .values([{ league_id, member_id }])
-      .execute();
-      
-  } catch (err) {
-    console.log(err);
-
-    throw new Error(err);
+    await addDoc(collection(db, "league_members"), { league_id, member_id });
+  } catch (e: any) {
+    throw new Error(e);
   }
 }
