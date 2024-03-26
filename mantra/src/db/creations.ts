@@ -23,7 +23,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
 /**
  *
@@ -37,7 +37,11 @@ export async function createAccounts(
   wallet_address: string
 ) {
   try {
-    await addDoc(collection(db, "accounts"), {});
+    await addDoc(collection(db, "accounts"), {
+      manager_id,
+      email,
+      wallet_address,
+    });
   } catch (e: any) {
     throw new Error(e);
   }
@@ -50,12 +54,12 @@ export async function createAccounts(
  */
 export async function createLeague(
   name: string,
-  league_id: number,
+  league_id: string,
   description: string,
   teams: number,
   price: number,
-
-  events_included: number
+  events_included: number,
+  joining_data: { join_link: string; join_code: string }
 ) {
   try {
     await addDoc(collection(db, "leagues"), {
@@ -65,6 +69,10 @@ export async function createLeague(
       teams,
       price,
       events_included,
+      joining_data: {
+        join_link: joining_data.join_link,
+        join_code: joining_data.join_code,
+      },
     });
   } catch (e: any) {
     throw new Error(e);

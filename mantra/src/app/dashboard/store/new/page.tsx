@@ -35,6 +35,8 @@ const formSchema = z.object({
   price: z.number(),
   league_id: z.string(),
   events_included: z.number(),
+  join_link: z.string(),
+  join_code: z.string(),
 
   // tags: z.string()
 });
@@ -64,6 +66,7 @@ function CreateLeague() {
         teams: data.teams,
         price: data.price,
         events_included: data.events_included,
+        joining_data: { join_link: data.join_link, join_code: data.join_code },
       });
       if (response.status === 200) {
         //Create the league onchain
@@ -105,11 +108,7 @@ function CreateLeague() {
             <FormField
               control={form.control}
               name="name"
-              render={(
-                {
-                 
-                }
-              ) => {
+              render={({}) => {
                 return (
                   <FormItem>
                     <FormLabel>Name of the league</FormLabel>
@@ -211,7 +210,9 @@ function CreateLeague() {
                       <Input
                         /*{...field}*/ placeholder="events_included"
                         type="number"
-                        {...form.register("events_included", { valueAsNumber: true })}
+                        {...form.register("events_included", {
+                          valueAsNumber: true,
+                        })}
                       />
                     </FormControl>
                     <FormMessage />
@@ -233,6 +234,45 @@ function CreateLeague() {
                         /*{...field}*/ type="number"
                         placeholder="Price"
                         {...form.register("price", { valueAsNumber: true })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+            <FormField
+              control={form.control}
+              name="join_link"
+              render={({}) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Join link of the league</FormLabel>
+                    <FormControl>
+                      <Input
+                        /*{...field}*/ placeholder="Join link"
+                        type="text"
+                        {...form.register("join_link")}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            <FormField
+              control={form.control}
+              name="join_code"
+              render={({}) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Joining code league</FormLabel>
+                    <FormControl>
+                      <Input
+                        /*{...field}*/ placeholder="Code"
+                        type="text"
+                        {...form.register("join_code")}
                       />
                     </FormControl>
                     <FormMessage />

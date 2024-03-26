@@ -68,15 +68,13 @@ async function DashboardPage() {
               <DialogHeader>
                 <DialogTitle>Join an existing league</DialogTitle>
                 <DialogDescription>
-                  This operation requires you to enter a league name and its
-                  code to proceed. You could also join a league if you have a
-                  link to the league
+                  Enter league code to join the league. Make sure you have 
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col w-full gap-y-2 ">
-                <Input placeholder="League Name" type="text" />
+               
                 <Input
-                  /*onChange={(e) => setPassword(e.target.value)}*/ placeholder="League Password..."
+                  /*onChange={(e) => setPassword(e.target.value)}*/ placeholder="League code..."
                   type="password"
                 />
                 <Button variant={"default"} /*onClick={handleDecrypt}*/>
