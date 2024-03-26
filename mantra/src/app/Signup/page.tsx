@@ -31,13 +31,17 @@ function LoginPage() {
 
   const onSubmit = async (data: Schema) => {
     try {
-      const response = await axios.post('/api/login', { username: data.username, password: data.password });
+      // const response = await axios.get("api/get_leagues", {});
+
+      const response = await axios.post("/api/login", {
+        username: data.username,
+        password: data.password,
+      });
       console.log(response);
     } catch (e) {
       throw new Error((e as Error).toString());
     }
     setLoading(true);
-   
   };
 
   return (
