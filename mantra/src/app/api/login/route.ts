@@ -25,6 +25,7 @@ export async function POST(request: Request) {
         },
         validateStatus: (statusCode: number) =>
           statusCode >= 200 && statusCode < 400,
+        maxRedirects: 0,
       }
     );
     console.log("response");

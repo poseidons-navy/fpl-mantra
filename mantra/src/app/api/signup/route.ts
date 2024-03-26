@@ -1,9 +1,9 @@
 import { createAccounts } from "@/db/creations";
 export async function POST(request: Request) {
   const signup_details = await request.json();
-  const { username, password, email } = signup_details;
+  const { manager_id, email, wallet_address } = signup_details;
   try {
-    const response = await createAccounts(username, password, email);
+    const response = await createAccounts(manager_id, email, wallet_address);
     return new Response(JSON.stringify({ message: response }), { status: 200 });
   } catch (e) {
     console.log(e);
