@@ -24,3 +24,12 @@ export async function getLeagues() {
     throw new Error(error);
   }
 }
+
+export async function getCompetitionsFromDB() {
+  try {
+
+  } catch(e: any) {
+    console.log("Could Not Get Competitions", e);
+    throw new Error("Could Not Get Competitions From DB");
+  }
+}

@@ -35,13 +35,15 @@ export async function createAccounts(
   manager_id: number,
   email: string,
   wallet_address: string
-) {
+): Promise<string> {
   try {
-    await addDoc(collection(db, "accounts"), {
+    const docRef = await addDoc(collection(db, "accounts"), {
       manager_id,
       email,
       wallet_address,
     });
+
+    return docRef.id;
   } catch (e: any) {
     throw new Error(e);
   }
@@ -89,5 +91,14 @@ export async function joinLeague(league_id: number, member_id: number) {
     await addDoc(collection(db, "league_members"), { league_id, member_id });
   } catch (e: any) {
     throw new Error(e);
+  }
+}
+
+export async function createCompetitionInDB() {
+  try {
+    
+  } catch(e:any) {
+    console.log(e, "Could Not Add Competition to DB");
+    throw new Error("Could Not Add Competition To DB");
   }
 }
