@@ -2,8 +2,16 @@ use solana_program::{
     pubkey::Pubkey,
     program_error::ProgramError
 };
-use borsh::BorshDeserialize;
+
 use crate::state::{Account, Competition};
+
+pub fn my_try_from_slice_unchecked<T: borsh::BorshDeserialize>(data: &[u8]) -> Result<T, ProgramError> {
+    let mut data_mut = data;
+    match T::deserialize(&mut data_mut) {
+      Ok(result) => Ok(result),
+      Err(_) => Err(ProgramError::InvalidInstructionData)
+    }
+  }
 
 pub fn get_pda_for_accounts(
     account: &Account,
@@ -46,14 +54,6 @@ pub fn get_league_jackpot_account(
         program_id
     );
     (jackpot, bump_seed)
-}
-
-pub fn my_try_from_slice_unchecked<T: BorshDeserialize>(data: &[u8]) -> Result<T, ProgramError> {
-    let mut data_mut = data;
-    match T::deserialize(&mut data_mut) {
-        Ok(result) => Ok(result),
-        Err(_) => Err(ProgramError::InvalidInstructionData)
-    }
 }
 
 pub fn get_account_size(account: &Account) -> usize{

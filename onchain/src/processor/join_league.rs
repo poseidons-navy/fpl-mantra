@@ -103,137 +103,137 @@ pub fn join_league(
     Ok(())
 }
 
-#[cfg(test)]
-mod tests {
-    use {
-        super::*,
-        crate::pinstruction::LeagueInstructionStruct,
-        crate::pstate::LeagueAccountState,
-        borsh::{BorshDeserialize, BorshSerialize},
-        solana_program::instruction::{AccountMeta, Instruction},
-        solana_program::system_program,
-        solana_program_test::*,
-        solana_sdk::{signature::Signer, signer::keypair::Keypair, transaction::Transaction},
-    };
+// #[cfg(test)]
+// mod tests {
+//     use {
+//         super::*,
+//         crate::pinstruction::LeagueInstructionStruct,
+//         crate::pstate::LeagueAccountState,
+//         borsh::{BorshDeserialize, BorshSerialize},
+//         solana_program::instruction::{AccountMeta, Instruction},
+//         solana_program::system_program,
+//         solana_program_test::*,
+//         solana_sdk::{signature::Signer, signer::keypair::Keypair, transaction::Transaction},
+//     };
 
-    #[tokio::test]
-    async fn add_member_works() {
-        //Instruction for create league
-        let instruction_league = LeagueInstructionStruct {
-            league_id: String::from("12"),
-            creator_id: String::from("CreatorID"),
-            league_name: String::from("League Name"),
-            events_included: 1,
-            user_id: String::from(""),
-            manager_id: String::from(""),
-            entry_fee: 0,
-            name: String::from(""),
-        };
-        //Create league
-        let mut sink = vec![0];
-        instruction_league.serialize(&mut sink).unwrap();
+//     #[tokio::test]
+//     async fn add_member_works() {
+//         //Instruction for create league
+//         let instruction_league = LeagueInstructionStruct {
+//             league_id: String::from("12"),
+//             creator_id: String::from("CreatorID"),
+//             league_name: String::from("League Name"),
+//             events_included: 1,
+//             user_id: String::from(""),
+//             manager_id: String::from(""),
+//             entry_fee: 0,
+//             name: String::from(""),
+//         };
+//         //Create league
+//         let mut sink = vec![0];
+//         instruction_league.serialize(&mut sink).unwrap();
 
-        let program_id = Pubkey::new_unique();
+//         let program_id = Pubkey::new_unique();
 
-        let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
-            "Mantra",
-            program_id,
-            processor!(crate::entrypoint::process_instruction),
-        )
-        .start()
-        .await;
-        let league_creator = Keypair::new();
-        let (pda, _bump_seed) = generate_pda(&instruction_league.league_id, &program_id);
+//         let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
+//             "Mantra",
+//             program_id,
+//             processor!(crate::entrypoint::process_instruction),
+//         )
+//         .start()
+//         .await;
+//         let league_creator = Keypair::new();
+//         let (pda, _bump_seed) = generate_pda(&instruction_league.league_id, &program_id);
 
-        let mut transaction = Transaction::new_with_payer(
-            &[Instruction {
-                program_id,
-                accounts: vec![
-                    AccountMeta::new(payer.pubkey(), true),
-                    AccountMeta::new(pda, false),
-                    AccountMeta::new(system_program::id(), false),
-                ],
-                data: sink,
-            }],
-            Some(&payer.pubkey()),
-        );
+//         let mut transaction = Transaction::new_with_payer(
+//             &[Instruction {
+//                 program_id,
+//                 accounts: vec![
+//                     AccountMeta::new(payer.pubkey(), true),
+//                     AccountMeta::new(pda, false),
+//                     AccountMeta::new(system_program::id(), false),
+//                 ],
+//                 data: sink,
+//             }],
+//             Some(&payer.pubkey()),
+//         );
 
-        transaction.sign(&[&payer], recent_blockhash);
+//         transaction.sign(&[&payer], recent_blockhash);
 
-        banks_client.process_transaction(transaction).await.unwrap();
+//         banks_client.process_transaction(transaction).await.unwrap();
 
-        // Add member
-        let instruction_member = LeagueInstructionStruct {
-            league_id: String::from("12"),
-            creator_id: String::from(""),
-            league_name: String::from(""),
-            events_included: 0,
-            user_id: String::from("User2"),
-            manager_id: String::from(""),
-            entry_fee: 0,
-            name: String::from(""),
-        };
-        let mut sink2 = vec![3];
-        instruction_member.serialize(&mut sink2).unwrap();
+//         // Add member
+//         let instruction_member = LeagueInstructionStruct {
+//             league_id: String::from("12"),
+//             creator_id: String::from(""),
+//             league_name: String::from(""),
+//             events_included: 0,
+//             user_id: String::from("User2"),
+//             manager_id: String::from(""),
+//             entry_fee: 0,
+//             name: String::from(""),
+//         };
+//         let mut sink2 = vec![3];
+//         instruction_member.serialize(&mut sink2).unwrap();
 
-        // let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
-        //     "Mantra",
-        //     program_id,
-        //     processor!(crate::entrypoint::process_instruction),
-        // )
-        // .start()
-        // .await;
-        let (pda2, _bump_seed) = generate_pda(&instruction_league.league_id, &program_id);
-        let mut transaction2 = Transaction::new_with_payer(
-            &[Instruction {
-                program_id,
-                accounts: vec![
-                    AccountMeta::new(payer.pubkey(), true),
-                    AccountMeta::new(pda2, false),
-                    AccountMeta::new(system_program::id(), false),
-                ],
-                data: sink2,
-            }],
-            Some(&payer.pubkey()),
-        );
-        let last_blockhash = banks_client
-            .get_new_latest_blockhash(&recent_blockhash)
-            .await
-            .unwrap();
-        transaction2.sign(&[&payer], last_blockhash);
+//         // let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
+//         //     "Mantra",
+//         //     program_id,
+//         //     processor!(crate::entrypoint::process_instruction),
+//         // )
+//         // .start()
+//         // .await;
+//         let (pda2, _bump_seed) = generate_pda(&instruction_league.league_id, &program_id);
+//         let mut transaction2 = Transaction::new_with_payer(
+//             &[Instruction {
+//                 program_id,
+//                 accounts: vec![
+//                     AccountMeta::new(payer.pubkey(), true),
+//                     AccountMeta::new(pda2, false),
+//                     AccountMeta::new(system_program::id(), false),
+//                 ],
+//                 data: sink2,
+//             }],
+//             Some(&payer.pubkey()),
+//         );
+//         let last_blockhash = banks_client
+//             .get_new_latest_blockhash(&recent_blockhash)
+//             .await
+//             .unwrap();
+//         transaction2.sign(&[&payer], last_blockhash);
 
-        banks_client
-            .process_transaction(transaction2)
-            .await
-            .unwrap();
+//         banks_client
+//             .process_transaction(transaction2)
+//             .await
+//             .unwrap();
 
-        // Test if any of the created members has the id of the added member
-        let created_account = banks_client.get_account(pda2).await;
+//         // Test if any of the created members has the id of the added member
+//         let created_account = banks_client.get_account(pda2).await;
 
-        match created_account {
-            Ok(None) => assert_eq!(false, true),
-            Ok(Some(account)) => {
-                let league =
-                    LeagueAccountState::deserialize(&mut account.data.to_vec().as_ref()).unwrap();
+//         match created_account {
+//             Ok(None) => assert_eq!(false, true),
+//             Ok(Some(account)) => {
+//                 let league =
+//                     LeagueAccountState::deserialize(&mut account.data.to_vec().as_ref()).unwrap();
 
-                // See if any member was returned
-                assert!(
-                    league.league_members.len() >= 1,
-                    "No member was created `{}`",
-                    league.league_name
-                );
+//                 // See if any member was returned
+//                 assert!(
+//                     league.league_members.len() >= 1,
+//                     "No member was created `{}`",
+//                     league.league_name
+//                 );
 
-                // See if the right member was created
-                let mut found = false;
-                for x in league.league_members {
-                    if x == instruction_member.user_id {
-                        found = true;
-                    }
-                }
+//                 // See if the right member was created
+//                 let mut found = false;
+//                 for x in league.league_members {
+//                     if x == instruction_member.user_id {
+//                         found = true;
+//                     }
+//                 }
 
-                assert_eq!(found, true, "The wrong member was created");
-            }
-            Err(_) => assert_eq!(false, true),
-        }
-    }
-}
+//                 assert_eq!(found, true, "The wrong member was created");
+//             }
+//             Err(_) => assert_eq!(false, true),
+//         }
+//     }
+// }

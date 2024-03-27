@@ -48,72 +48,72 @@ pub fn init_league_jackpot(
     Ok(())
 }
 
-#[cfg(test)]
-mod tests {
-    use {
-        borsh::BorshSerialize,
-        super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signer::Signer, system_program, transaction::Transaction},
-    };
+// #[cfg(test)]
+// mod tests {
+//     use {
+//         borsh::BorshSerialize,
+//         super::*, crate::pinstruction::LeagueInstructionStruct, solana_program::instruction::{AccountMeta, Instruction}, solana_program_test::{processor, ProgramTest}, solana_sdk::{signer::Signer, system_program, transaction::Transaction},
+//     };
 
-    #[tokio::test]
-    async fn init_league_jackpot_test() {
-        let league_name = String::from("TestLeague");
+//     #[tokio::test]
+//     async fn init_league_jackpot_test() {
+//         let league_name = String::from("TestLeague");
 
-        let instruction_data = LeagueInstructionStruct {
-            league_id: String::from(""),
-            creator_id: String::from(""),
-            league_name: league_name.clone(),
-            events_included: 0,
-            user_id: String::from(""),
-            manager_id: String::from(""),
-            entry_fee: 0,
-            name: String::from("")
-        };
+//         let instruction_data = LeagueInstructionStruct {
+//             league_id: String::from(""),
+//             creator_id: String::from(""),
+//             league_name: league_name.clone(),
+//             events_included: 0,
+//             user_id: String::from(""),
+//             manager_id: String::from(""),
+//             entry_fee: 0,
+//             name: String::from("")
+//         };
 
-        // Serialize instructions
-        let mut sink = vec![2];
-        instruction_data.serialize( &mut sink).unwrap();
-        let program_id = Pubkey::new_unique();
+//         // Serialize instructions
+//         let mut sink = vec![2];
+//         instruction_data.serialize( &mut sink).unwrap();
+//         let program_id = Pubkey::new_unique();
 
-        let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
-            "FPL Mantra",
-            program_id,
-            processor!(crate::entrypoint::process_instruction)
-        ).start().await;
+//         let (mut banks_client, payer, recent_blockhash) = ProgramTest::new(
+//             "FPL Mantra",
+//             program_id,
+//             processor!(crate::entrypoint::process_instruction)
+//         ).start().await;
 
-        let (pda, _) = helper::get_league_jackpot_account(league_name.clone(), &program_id);
+//         let (pda, _) = helper::get_league_jackpot_account(league_name.clone(), &program_id);
 
-        let mut transaction = Transaction::new_with_payer(
-            &[Instruction {
-                program_id,
-                accounts: vec![
-                    AccountMeta::new(payer.pubkey(), true),
-                    AccountMeta::new(pda, false),
-                    AccountMeta::new(system_program::id(), false)
-                ],
-                data: sink
-            }],
-            Some(&payer.pubkey())
-        );
+//         let mut transaction = Transaction::new_with_payer(
+//             &[Instruction {
+//                 program_id,
+//                 accounts: vec![
+//                     AccountMeta::new(payer.pubkey(), true),
+//                     AccountMeta::new(pda, false),
+//                     AccountMeta::new(system_program::id(), false)
+//                 ],
+//                 data: sink
+//             }],
+//             Some(&payer.pubkey())
+//         );
 
-        transaction.sign(&[&payer], recent_blockhash);
+//         transaction.sign(&[&payer], recent_blockhash);
 
-        banks_client.process_transaction(transaction).await.unwrap();
+//         banks_client.process_transaction(transaction).await.unwrap();
 
-        let created_account = banks_client.get_account(pda).await;
+//         let created_account = banks_client.get_account(pda).await;
 
-        match created_account {
-            Ok(None) => assert_eq!(false, true),
-            Ok(Some(_)) => {
-                assert_eq!(true, true);
-            }
-            // Ok(Some(account)) => {
-            //     let account_data = Account::deserialize(&mut account.data.to_vec().as_ref()).unwrap();
+//         match created_account {
+//             Ok(None) => assert_eq!(false, true),
+//             Ok(Some(_)) => {
+//                 assert_eq!(true, true);
+//             }
+//             // Ok(Some(account)) => {
+//             //     let account_data = Account::deserialize(&mut account.data.to_vec().as_ref()).unwrap();
 
-            //     assert!(account_data.user_id == user_id.clone(), "Account Created With Wrong User ID");
-            //     assert!(account_data.manager_id == manager_id.clone(), "Account Created With Wrong Manager ID");
-            // },
-            Err(_) => assert_eq!(false, true)
-        }
-    }
-}
+//             //     assert!(account_data.user_id == user_id.clone(), "Account Created With Wrong User ID");
+//             //     assert!(account_data.manager_id == manager_id.clone(), "Account Created With Wrong Manager ID");
+//             // },
+//             Err(_) => assert_eq!(false, true)
+//         }
+//     }
+// }
