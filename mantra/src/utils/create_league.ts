@@ -1,5 +1,6 @@
 import * as web3 from "@solana/web3.js";
 import * as borsh from "@coral-xyz/borsh";
+import "dotenv/config";
 export class League {
   league_id: string;
   league_name: string;
@@ -41,7 +42,7 @@ export async function handleCreateLeagueOnchain(
   league: League,
   publicKey: web3.PublicKey,
 ): Promise<web3.Transaction> {
-  const PROGRAM_ID = "G2abatzkAR2WrDSyABpDVb28Dkk2zxELyaP5jEtmXg35";
+  const PROGRAM_ID = process.env.PROGRAM_ID!;
   if (!publicKey) {
     throw new Error("Wallet not connected");
   }

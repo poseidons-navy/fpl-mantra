@@ -1,5 +1,6 @@
 "use client";
 import BackButton from "@/components/back-button";
+import "dotenv/config";
 import {
   Form,
   FormControl,
