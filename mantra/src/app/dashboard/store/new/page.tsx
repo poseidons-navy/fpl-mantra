@@ -27,7 +27,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as web3 from "@solana/web3.js";
 import axios from "axios";
-import { handleCreateLeagueOnchain, League } from "@/utils/create_league";
+import { handleCreateLeagueOnchain,  borshInstructionschema } from "@/utils/create_league";
 
 const formSchema = z.object({
   name: z.string(),
@@ -46,14 +46,12 @@ type Schema = z.infer<typeof formSchema>;
 
 function CreateLeague() {
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-  const [showDialog, setShowDialog] = useState();
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const form = useForm<Schema>({
     resolver: zodResolver(formSchema),
   });
-
+  
   const onSubmit = async (data: Schema) => {
     if (!publicKey) {
       throw new Error("Wallet not connected");
@@ -70,15 +68,25 @@ function CreateLeague() {
         joining_data: { join_link: data.join_link, join_code: data.join_code },
       });
       if (response.status === 200) {
+        console.log("firebase succesfull. Now creating league onchain");
         //Create the league onchain
-        const league = new League(
-          data.league_id,
-          data.name,
-          [],
-          "admin1",
-          data.events_included
-        );
-        const transaction = await handleCreateLeagueOnchain(league, publicKey);
+        const buffer = Buffer.alloc(10000);
+        console.log("here");
+        borshInstructionschema.encode({
+        variant: 0,
+        league_id: data.league_id,
+        league_name: data.name,
+        // league_members: [],
+        creator_id: publicKey.toBase58(),
+        events_included: data.events_included,
+        user_id: "",
+        manager_id: "",
+        entry_fee: data.price,
+        name: "",
+        }, buffer);
+        console.log("Did we like reach here");
+        const instructionBuffer = buffer.subarray(0, borshInstructionschema.getSpan(buffer));
+        const transaction = await handleCreateLeagueOnchain(instructionBuffer, publicKey, data.league_id);
         //Send the transaction
         console.log("We are sending the transaction");
         let txid = await sendTransaction(transaction, connection);
@@ -87,8 +95,8 @@ function CreateLeague() {
         );
       }
       console.log(response);
-    } catch (e) {
-      throw new Error((e as Error).toString());
+    } catch (e: any) {
+      throw new Error(e.toString());
     }
     setLoading(true);
   };
