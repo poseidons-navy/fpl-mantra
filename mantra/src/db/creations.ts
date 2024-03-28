@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import "dotenv/config";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-console.log(process.env.API_KEY);
+
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
   authDomain: process.env.AUTH_DOMAIN,
