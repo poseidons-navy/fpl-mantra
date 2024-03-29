@@ -27,7 +27,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import * as web3 from "@solana/web3.js";
 import axios from "axios";
-import { handleCreateLeagueOnchain,  borshInstructionschema } from "@/utils/create_league";
+import {
+  handleCreateLeagueOnchain,
+  borshInstructionschema,
+} from "@/utils/create_league";
+import { Buffer } from "buffer";
 
 const formSchema = z.object({
   name: z.string(),
@@ -51,7 +55,7 @@ function CreateLeague() {
   const form = useForm<Schema>({
     resolver: zodResolver(formSchema),
   });
-  
+
   const onSubmit = async (data: Schema) => {
     if (!publicKey) {
       throw new Error("Wallet not connected");
@@ -69,26 +73,53 @@ function CreateLeague() {
       });
       if (response.status === 200) {
         console.log("firebase succesfull. Now creating league onchain");
-        //Create the league onchain
+        
         const buffer = Buffer.alloc(10000);
         console.log("here");
-        borshInstructionschema.encode({
-        variant: 0,
-        league_id: data.league_id,
-        league_name: data.name,
-        // league_members: [],
-        creator_id: publicKey.toBase58(),
-        events_included: data.events_included,
-        user_id: "",
-        manager_id: "",
-        entry_fee: data.price,
-        name: "",
-        }, buffer);
+        borshInstructionschema.encode(
+          {
+            variant: 0,
+            league_id: data.league_id,
+            creator_id: publicKey.toBase58(),
+            league_name: data.name,
+            events_included: data.events_included,
+            user_id: "",
+            manager_id: "",
+            // entry_fee: 0,
+            name: "",
+          },
+          buffer
+        );
         console.log("Did we like reach here");
-        const instructionBuffer = buffer.subarray(0, borshInstructionschema.getSpan(buffer));
-        const transaction = await handleCreateLeagueOnchain(instructionBuffer, publicKey, data.league_id);
+        console.log(borshInstructionschema);
+        const instructionBuffer = buffer.subarray(
+          0,
+          borshInstructionschema.getSpan(buffer)
+        );
+
+
+        //Serializing payload
+        // const league = new Payload({
+        //   variant: 0,
+        //   league_id: data.league_id,
+        //   creator_id: publicKey.toBase58(),
+        //   league_name: data.name,
+        //   events_included: data.events_included,
+        //   user_id: "",
+        //   manager_id: "",
+        //   entry_fee: data.price,
+        //   name: "",
+
+        // })
+        // const instructionBuffer = Buffer.from(serialize(payloadSchema, league));
+        const transaction = await handleCreateLeagueOnchain(
+          instructionBuffer,
+          publicKey,
+          data.league_id
+        );
         //Send the transaction
         console.log("We are sending the transaction");
+        console.log(transaction);
         let txid = await sendTransaction(transaction, connection);
         console.log(
           `Transaction submitted: https://explorer.solana.com/tx/${txid}?cluster=devnet`

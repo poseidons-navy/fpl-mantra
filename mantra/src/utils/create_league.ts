@@ -4,12 +4,12 @@ export const  borshInstructionschema = borsh.struct([
     borsh.u8("variant"),
     borsh.str("league_id"),
     borsh.str("league_name"),
-    borsh.vec(borsh.str(), "league_members"),
+    // borsh.vec(borsh.str(), "league_members"),
     borsh.str("creator_id"),
     borsh.u8("events_included"),
     borsh.str("user_id"),
     borsh.str("manager_id"),
-    borsh.u64("entry_fee"),
+    // borsh.u64("entry_fee"),
     borsh.str("name"),
   ]);
 interface Leagueargs {
@@ -17,10 +17,10 @@ interface Leagueargs {
   league_name?: string;
   league_members?: string[];
   creator_id?: string;
-  events_included?: number;
+  // events_included?: number;
   user_id?: string;
   manager_id?: string;
-  entry_fee?: number;
+  // entry_fee?: number;
   name?: string;
 }
 export class League {
@@ -28,10 +28,10 @@ export class League {
   league_name: string;
   league_members: string[];
   creator_id: string;
-  events_included: number;
+  // events_included: number;
   user_id: string;
   manager_id: string;
-  entry_fee: number;
+  // entry_fee: number;
   name: string;
 
   constructor(fields: Leagueargs) {
@@ -39,18 +39,19 @@ export class League {
     this.league_name = fields.league_name ?? "";
     this.league_members = fields.league_members ?? [];
     this.creator_id = fields.creator_id ?? "";
-    this.events_included = fields.events_included ?? 0;
+    // this.events_included = fields.events_included ?? 0;
     this.user_id = fields.user_id ?? "";
     this.manager_id = fields.manager_id ?? "";
-    this.entry_fee = fields.entry_fee ?? 0.0;
+    // this.entry_fee = fields.entry_fee ?? 0.0;
     this.name = fields.name ?? "";
   }
   borshInstructionschema = borsh.struct([
     borsh.u8("variant"),
     borsh.str("league_id"),
+     borsh.str("creator_id"),
     borsh.str("league_name"),
-    // borsh.vec(borsh.str(), "league_members"),
-    borsh.str("creator_id"),
+   
+   
     borsh.u8("events_included"),
     borsh.str("user_id"),
     borsh.str("manager_id"),
