@@ -2,7 +2,6 @@
 import BackButton from "@/components/back-button";
 import "dotenv/config";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -10,22 +9,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input, Textarea } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { sendSol } from "@/utils/handle_league_payments";
-import { useToast } from "@/components/ui/use-toast";
+
+
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import * as web3 from "@solana/web3.js";
 import axios from "axios";
 import {
   handleCreateLeagueOnchain,
@@ -98,20 +89,7 @@ function CreateLeague() {
         );
 
 
-        //Serializing payload
-        // const league = new Payload({
-        //   variant: 0,
-        //   league_id: data.league_id,
-        //   creator_id: publicKey.toBase58(),
-        //   league_name: data.name,
-        //   events_included: data.events_included,
-        //   user_id: "",
-        //   manager_id: "",
-        //   entry_fee: data.price,
-        //   name: "",
-
-        // })
-        // const instructionBuffer = Buffer.from(serialize(payloadSchema, league));
+       
         const transaction = await handleCreateLeagueOnchain(
           instructionBuffer,
           publicKey,

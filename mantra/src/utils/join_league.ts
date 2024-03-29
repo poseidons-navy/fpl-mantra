@@ -1,41 +1,64 @@
 import * as web3 from '@solana/web3.js';
 import * as borsh from '@coral-xyz/borsh';
+export const  joinInstructionschema = borsh.struct([
+  borsh.u8("variant"),
+  borsh.str("league_id"),
+  borsh.str("league_name"),
+  // borsh.vec(borsh.str(), "league_members"),
+  borsh.str("creator_id"),
+  borsh.u8("events_included"),
+  borsh.str("user_id"),
+  borsh.str("manager_id"),
+  // borsh.u64("entry_fee"),
+  borsh.str("name"),
+]);
 
-import { League } from './create_league';
-export async function joinLeague(league: League, publicKey: web3.PublicKey): Promise<web3.Transaction> {
-  const PROGRAM_ID = 'G2abatzkAR2WrDSyABpDVb28Dkk2zxELyaP5jEtmXg35';
+export async function handleJoinLeagueOnchain(
+  buffer: Buffer,
+  publicKey: web3.PublicKey,
+  league_id: string
+): Promise<web3.Transaction> {
+  const PROGRAM_ID = "Ad3xqSchmppKHSKgx3LKc6qASxJvxarTDsEojwwckSmh";
+ 
   if (!publicKey) {
-    throw new Error('Wallet not connected');
+    throw new Error("Wallet not connected");
   }
+  console.log("Tried pda");
   const [pda] = web3.PublicKey.findProgramAddressSync(
-    [Buffer.from('leagues'), Buffer.from(league.league_id)],
+    [Buffer.from("leagues"), Buffer.from(league_id)],
     new web3.PublicKey(PROGRAM_ID)
   );
-  const buffer = league.serialize();
+  console.log("pda generated");
+  
+  console.log("Buffer generated");
   const transaction = new web3.Transaction();
   const instruction = new web3.TransactionInstruction({
     keys: [
       {
         pubkey: publicKey,
+
         isSigner: true,
-        isWritable: true,
+
+        isWritable: false,
       },
       {
         pubkey: pda,
+
         isSigner: false,
+
         isWritable: true,
       },
       {
         pubkey: web3.SystemProgram.programId,
+
         isSigner: false,
+
         isWritable: false,
-      }
+      },
     ],
     data: buffer,
     programId: new web3.PublicKey(PROGRAM_ID),
-   
   });
   transaction.add(instruction);
   return transaction;
-
 }

@@ -19,6 +19,5 @@ export async function sendSol(
     })
   );
   return transaction;
-  // const signature = await web3.sendTransaction(tran);
-  // return signature;
+  
 }
