@@ -16,7 +16,7 @@ use crate::state::Competition;
 pub fn create_competition(
     name: String,
     league_id: String,
-    entry_fee: u64,
+    entry_fee: u8,
     creator_id: String,
     accounts: &[AccountInfo],
     program_id: &Pubkey,
@@ -152,7 +152,7 @@ pub fn create_competition(
     msg!("Competition Jackpot Account Has Been Created");
     msg!("Funding Competition Jackpot Account");
     invoke_signed(
-        &system_instruction::transfer(creator_account.key, competition_jackpot_account.key, entry_fee.clone()),
+        &system_instruction::transfer(creator_account.key, competition_jackpot_account.key, entry_fee.clone().into()),
         &[creator_account.clone(), competition_jackpot_account.clone()],
         &[&[league_id.as_bytes().as_ref(), "community_jackpot".as_bytes().as_ref(), name.as_bytes().as_ref(), &[bump_seed]]],
     )?;
