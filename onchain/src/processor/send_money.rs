@@ -11,7 +11,7 @@ use crate::processor::helper;
  * Function to send money to the winner
  */
 pub fn send_money(
-    amount: u64,
+    amount: u8,
     league_name: String,
     program_id: &Pubkey,
     accounts: &[AccountInfo],
@@ -22,7 +22,7 @@ pub fn send_money(
     let pda = next_account_info(account_info_iter)?;
     let system_account = next_account_info(account_info_iter)?;
     let (_jackpot_pubkey, bump_seed) = helper::get_league_jackpot_account(league_name.clone(), program_id);
-    let ix = transfer(pda.key, to_account.key, amount);
+    let ix = transfer(pda.key, to_account.key, amount.into());
     invoke_signed(
         &ix,
         &[to_account.clone(), pda.clone(), system_account.clone()],

@@ -28,7 +28,7 @@ pub enum LeagueInstruction {
     CreateCompetition {
         name: String,
         league_id: String,
-        entry_fee: u64,
+        entry_fee: u8,
         creator_id: String
     },
 
@@ -49,7 +49,7 @@ pub struct LeagueInstructionStruct {
     pub events_included: u8,
     pub user_id: String,
     pub manager_id: String,
-    pub entry_fee: u64,
+    pub entry_fee: u8,
     pub name: String,
 }
 
