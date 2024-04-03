@@ -15,6 +15,9 @@ import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import WalletContextProvider from "@/components/wallet/WalletContextProvider";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const formSchema = z.object({
   email: z.string(),
@@ -30,6 +33,7 @@ function LoginPage() {
   const form = useForm<Schema>({
     resolver: zodResolver(formSchema),
   });
+  const {publicKey} = useWallet();
 
   const onSubmit = async (data: Schema) => {
     try {
@@ -41,9 +45,15 @@ function LoginPage() {
       //  password: data.password,
       //});
       //
+      if (!publicKey) {
+        console.log('error', 'Wallet not connected!');
+        return;
+      }
+
       const response = await axios.post("api/create-account", {
           email: data.email,
-          manager_id: data.manager_id
+          manager_id: data.manager_id,
+          publicKey
         });
       console.log(response);
     } catch (e) {
@@ -128,6 +138,9 @@ function LoginPage() {
               }}
             />
 
+              <div>
+                  <WalletMultiButton />
+              </div> 
             <FormControl>
               <Button type="submit">Login</Button>
             </FormControl>
