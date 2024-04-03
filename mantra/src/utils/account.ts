@@ -8,7 +8,7 @@ export interface account {
   manager_id: string
 }
 
-export class FPLMantraAccount {
+export default class FPLMantraAccount {
   PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID ?? "");
   constructor() {}
 

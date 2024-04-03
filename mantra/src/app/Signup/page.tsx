@@ -15,9 +15,11 @@ import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 const formSchema = z.object({
-  username: z.string(),
+  email: z.string(),
   password: z.string(),
+  manager_id: z.string().transform((p) => Number.parseInt(p))
 });
 
 type Schema = z.infer<typeof formSchema>;
@@ -33,10 +35,16 @@ function LoginPage() {
     try {
       // const response = await axios.get("api/get_leagues", {});
 
-      const response = await axios.post("/api/login", {
-        username: data.username,
-        password: data.password,
-      });
+      // const response = await axios.post("/api/login", {
+      //  email: data.email,
+      //  manager_id: data.manager_id,
+      //  password: data.password,
+      //});
+      //
+      const response = await axios.post("api/create-account", {
+          email: data.email,
+          manager_id: data.manager_id
+        });
       console.log(response);
     } catch (e) {
       throw new Error((e as Error).toString());
@@ -57,19 +65,40 @@ function LoginPage() {
             onSubmit={form.handleSubmit(onSubmit)}
             className="w-full h-full space-y-4"
           >
-            {/* Username */}
+            {/* Email */}
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({}) => {
                 return (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        {...form.register("username")}
-                        placeholder="Username"
+                        {...form.register("email")}
+                        placeholder="Email"
                         type="text"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+
+            {/* Manager ID */}
+            <FormField
+              control={form.control}
+              name="manager_id"
+              render={({}) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Manager ID</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...form.register("manager_id")}
+                        placeholder="Manager ID"
+                        type="number"
                       />
                     </FormControl>
                     <FormMessage />
