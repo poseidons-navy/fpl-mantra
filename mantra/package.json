@@ -25,6 +25,8 @@
     "@solana/wallet-adapter-wallets": "^0.19.32",
     "@splinetool/react-spline": "^2.2.6",
     "axios": "^1.6.8",
+    "bn.js": "^5.2.1",
+    "borsh": "^2.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.30.4",
@@ -42,6 +44,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/bn.js": "^5.1.5",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20",
     "@types/react": "^18",

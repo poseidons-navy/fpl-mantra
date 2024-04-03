@@ -3,7 +3,7 @@ export async function POST(request: Request) {
   const signup_details = await request.json();
   const { manager_id, email, wallet_address } = signup_details;
   try {
-    const response = await createAccounts(manager_id, email, wallet_address);
+    const response = await createAccounts(manager_id, email);
     return new Response(JSON.stringify({ message: response }), { status: 200 });
   } catch (e) {
     console.log(e);

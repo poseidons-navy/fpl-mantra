@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import CopyText from "@/components/copy-text";
 //import DecryptPrivateKey from '@/components/decrypt-private-key'
 import Redirect from "@/components/redirect";
@@ -25,11 +25,101 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import axios from "axios";
+import { set } from "lodash";
+import { sendSol } from "@/utils/handle_league_payments";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import {
+  joinInstructionschema,
+  handleJoinLeagueOnchain,
+} from "@/utils/join_league";
+import * as web3 from "@solana/web3.js";
+interface League {
+  description: string;
+  league_id: string;
+  league_name: string;
+  price: number;
+  teams: number;
+  joining_data: JoiningData;
+}
+interface JoiningData {
+  join_code: string;
+  join_link: string;
+}
+function DashboardPage() {
+  const [leagues, setLeagues] = React.useState<League[]>([]);
+  const { connection } = useConnection();
+  const { publicKey, sendTransaction } = useWallet();
 
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const response: League[] = await axios.get(
+          "http://localhost:3000/api/leagues"
+        );
+        setLeagues(response);
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  }, []);
+  async function handleJoin(
+    leagueId: string,
+    amount: number,
+    league_name: string
+  ) {
+    if (!publicKey) {
+      throw new Error("Wallet not connected");
+    }
+    try {
+      //send sol to the league pda.
+      const send_instruction = await sendSol(league_name, publicKey, amount);
+      //After sending sol, send join league transaction
+      const buffer = Buffer.alloc(10000);
+      joinInstructionschema.encode(
+        {
+          variant: 3,
+          league_id: leagueId,
+          league_name: "",
+          creator_id: "creator_id",
+          events_included: 0,
+          user_id: "user_id",
+          manager_id: "manager_id",
+          entry_fee: 0,
+          name: "",
+        },
+        buffer
+      );
+      const instructionBuffer = buffer.subarray(
+        0,
+        joinInstructionschema.getSpan(buffer)
+      );
 
-
-async function DashboardPage() {
- 
+      const join_instruction = await handleJoinLeagueOnchain(
+        instructionBuffer,
+        publicKey,
+        leagueId
+      );
+      const transaction = new web3.Transaction()
+        .add(send_instruction)
+        .add(join_instruction);
+      const txid = sendTransaction(transaction, connection);
+      console.log("transaction sent", txid);
+      //Join league offchain
+      if (await txid) {
+        const response = await axios.post("/api/join_league", {
+          league_id: leagueId,
+          member_id: publicKey.toBase58(),
+        });
+        if (response.status === 200) {
+          console.log("Joined league successfully");
+        }
+      }
+    } catch (e: any) {
+      console.log("Error occured during join league", e);
+      throw new Error(e.toString());
+    }
+  }
   return (
     <div className="flex flex-col items-center justify-center w-full space-y-10 px-2 pb-[100px]">
       {/* Wallet Section */}
@@ -68,11 +158,10 @@ async function DashboardPage() {
               <DialogHeader>
                 <DialogTitle>Join an existing league</DialogTitle>
                 <DialogDescription>
-                  Enter league code to join the league. Make sure you have 
+                  Enter league code to join the league. Make sure you have
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col w-full gap-y-2 ">
-               
                 <Input
                   /*onChange={(e) => setPassword(e.target.value)}*/ placeholder="League code..."
                   type="password"
@@ -106,20 +195,27 @@ async function DashboardPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {
-              /* {purchaseHistory.map((elem, index) => {
-                        return*/ <TableRow /*key={index}*/>
-                <TableCell>Wazito League{/*elem.name*/}</TableCell>
-                <TableCell>Vincent{/*elem.creator.name*/}</TableCell>
-                <TableCell>5{/*elem.genre*/}</TableCell>
-                <TableCell>
-                  <Link href="/dashboard/store/see">
-                    <Button>Preview</Button>
-                  </Link>
-                </TableCell>
-              </TableRow>
-              /*})} */
-            }
+            {(leagues.data || []).map((elem, index) => {
+              return (
+                <TableRow key={elem.league_id}>
+                  <TableCell>{elem.name}</TableCell>
+                  <TableCell>Admin</TableCell>
+                  <TableCell>{elem.teams}</TableCell>
+                  <TableCell>
+                    {/* <Link href="/dashboard/store/see"> */}
+                    <Button
+                      onClick={() =>
+                        // TODO: Changed the third argument
+                        handleJoin(elem.league_id, elem.price, elem.league_id)
+                      }
+                    >
+                      Join
+                    </Button>
+                    {/* </Link> */}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
@@ -150,7 +246,7 @@ async function DashboardPage() {
                 <TableCell>5{/*elem.genre*/}</TableCell>
                 <TableCell>
                   <Link href="/dashboard/store/see">
-                    <Button>Preview</Button>
+                    <Button onClick={handleJoin}>Join</Button>
                   </Link>
                 </TableCell>
               </TableRow>
