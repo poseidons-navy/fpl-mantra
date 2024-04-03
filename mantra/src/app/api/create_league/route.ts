@@ -1,5 +1,5 @@
 import { createLeague } from "@/db/creations";
-
+import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   console.log("Create league hit");
   const league_details = await request.json();
@@ -22,11 +22,19 @@ export async function POST(request: Request) {
       events_included,
       joining_data
     );
-    return new Response(JSON.stringify({ message: response }), { status: 200 });
+    return NextResponse.json(
+      {
+        message: "Successfully joined the league",
+      },
+      { status: 200 }
+    );
   } catch (e) {
     console.log(e);
-    return new Response(JSON.stringify({ error: "Server error" }), {
-      status: 500,
-    });
+    return NextResponse.json(
+      {
+        error: e instanceof Error ? e.message : "Something went wrong",
+      },
+      { status: 500 }
+    );
   }
 }

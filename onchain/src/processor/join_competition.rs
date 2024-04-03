@@ -127,7 +127,7 @@ pub fn join_competition(
 
     msg!("Funding Competition Jackpot Account");
     invoke_signed(
-        &system_instruction::transfer(member_account.key, competition_jackpot_account.key, entry_fee.clone()),
+        &system_instruction::transfer(member_account.key, competition_jackpot_account.key, entry_fee.clone().into()),
         &[member_account.clone(), competition_jackpot_account.clone()],
         &[&[league_id.as_bytes().as_ref(), "community_jackpot".as_bytes().as_ref(), name.as_bytes().as_ref(), &[bump]]],
     )?;

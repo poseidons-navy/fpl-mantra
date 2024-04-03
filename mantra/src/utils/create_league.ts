@@ -1,55 +1,83 @@
 import * as web3 from "@solana/web3.js";
-import * as borsh from "@coral-xyz/borsh";
-export class League {
-  league_id: string;
-  league_name: string;
-  league_members: string[];
-  creator_id: string;
-  events_included: number;
-
-  constructor(
-    league_id: string,
-    league_name: string,
-    league_members: string[],
-    creator_id: string,
-    events_included: number
-  ) {
-    this.league_id = league_id;
-    this.league_name = league_name;
-    this.league_members = league_members;
-    this.creator_id = creator_id;
-    this.events_included = events_included;
-  }
-  borshInstructionschema = borsh.struct([
+import * as borsh from "@project-serum/borsh";
+export const  borshInstructionschema = borsh.struct([
     borsh.u8("variant"),
     borsh.str("league_id"),
     borsh.str("league_name"),
     borsh.vec(borsh.str(), "league_members"),
     borsh.str("creator_id"),
     borsh.u8("events_included"),
+    borsh.str("user_id"),
+    borsh.str("manager_id"),
+    borsh.u64("entry_fee"),
+    borsh.str("name"),
   ]);
-  serialize(): Buffer {
-    const buffer = Buffer.alloc(1000);
+interface Leagueargs {
+  league_id?: string;
+  league_name?: string;
+  league_members?: string[];
+  creator_id?: string;
+  events_included?: number;
+  user_id?: string;
+  manager_id?: string;
+  entry_fee?: number;
+  name?: string;
+}
+export class League {
+  league_id: string;
+  league_name: string;
+  league_members: string[];
+  creator_id: string;
+  events_included: number;
+  user_id: string;
+  manager_id: string;
+  entry_fee: number;
+  name: string;
 
-    this.borshInstructionschema.encode({ ...this, variant: 0 }, buffer);
-
-    return buffer.subarray(0, this.borshInstructionschema.getSpan(buffer));
+  constructor(fields: Leagueargs) {
+    this.league_id = fields.league_id ?? "";
+    this.league_name = fields.league_name ?? "";
+    this.league_members = fields.league_members ?? [];
+    this.creator_id = fields.creator_id ?? "";
+    this.events_included = fields.events_included ?? 0;
+    this.user_id = fields.user_id ?? "";
+    this.manager_id = fields.manager_id ?? "";
+    this.entry_fee = fields.entry_fee ?? 0.0;
+    this.name = fields.name ?? "";
   }
+  borshInstructionschema = borsh.struct([
+    borsh.u8("variant"),
+    borsh.str("league_id"),
+    borsh.str("league_name"),
+    // borsh.vec(borsh.str(), "league_members"),
+    borsh.str("creator_id"),
+    borsh.u8("events_included"),
+    borsh.str("user_id"),
+    borsh.str("manager_id"),
+    borsh.u64("entry_fee"),
+    borsh.str("name"),
+  ]);
+
 }
 
 export async function handleCreateLeagueOnchain(
-  league: League,
+  buffer: Buffer,
   publicKey: web3.PublicKey,
+  league_id: string
 ): Promise<web3.Transaction> {
-  const PROGRAM_ID = "G2abatzkAR2WrDSyABpDVb28Dkk2zxELyaP5jEtmXg35";
+  const PROGRAM_ID = "Ad3xqSchmppKHSKgx3LKc6qASxJvxarTDsEojwwckSmh";
+ 
   if (!publicKey) {
     throw new Error("Wallet not connected");
   }
+  console.log("Tried pda");
   const [pda] = web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("leagues"), Buffer.from(league.league_id)],
+    [Buffer.from("leagues"), Buffer.from(league_id)],
     new web3.PublicKey(PROGRAM_ID)
   );
-  const buffer = league.serialize();
+  console.log("pda generated");
+  
+  console.log("Buffer generated");
   const transaction = new web3.Transaction();
   const instruction = new web3.TransactionInstruction({
     keys: [
@@ -80,28 +108,4 @@ export async function handleCreateLeagueOnchain(
   });
   transaction.add(instruction);
   return transaction;
-}
-export async function handleCreateLeagueFpl(
-  has_cup: boolean,
-  start_event: number,
-  league_name: string
-) {
-  const url = "https://fantasy.premierleague.com/api/leagues-classic/";
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        has_cup: has_cup,
-        start_event: start_event,
-        league_name: league_name,
-      }),
-    });
-    return response;
-  } catch (e) {
-    console.log(e);
-    return e;
-  }
 }

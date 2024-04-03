@@ -1,16 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import "dotenv/config";
-import {
-  getFirestore,
-  collection,
-  doc,
-  addDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
-console.log(process.env.API_KEY);
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
   authDomain: process.env.AUTH_DOMAIN,
@@ -96,8 +88,7 @@ export async function joinLeague(league_id: number, member_id: number) {
 
 export async function createCompetitionInDB() {
   try {
-    
-  } catch(e:any) {
+  } catch (e: any) {
     console.log(e, "Could Not Add Competition to DB");
     throw new Error("Could Not Add Competition To DB");
   }
