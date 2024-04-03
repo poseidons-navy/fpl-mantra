@@ -9,7 +9,7 @@ export const  joinInstructionschema = borsh.struct([
   borsh.u8("events_included"),
   borsh.str("user_id"),
   borsh.str("manager_id"),
-  // borsh.u64("entry_fee"),
+  borsh.u8("entry_fee"),
   borsh.str("name"),
 ]);
 
@@ -17,8 +17,8 @@ export async function handleJoinLeagueOnchain(
   buffer: Buffer,
   publicKey: web3.PublicKey,
   league_id: string
-): Promise<web3.Transaction> {
-  const PROGRAM_ID = "Ad3xqSchmppKHSKgx3LKc6qASxJvxarTDsEojwwckSmh";
+): Promise<web3.TransactionInstruction> {
+  const PROGRAM_ID = "9SfnmEHEFzTqGj7yzf1Zwzb6EqAWa3ViXNt1xmV3Szt5";
  
   if (!publicKey) {
     throw new Error("Wallet not connected");
@@ -59,6 +59,6 @@ export async function handleJoinLeagueOnchain(
     data: buffer,
     programId: new web3.PublicKey(PROGRAM_ID),
   });
-  transaction.add(instruction);
-  return transaction;
+  
+  return instruction;
 }

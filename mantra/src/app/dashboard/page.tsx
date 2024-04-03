@@ -29,7 +29,11 @@ import axios from "axios";
 import { set } from "lodash";
 import { sendSol } from "@/utils/handle_league_payments";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { joinInstructionschema, handleJoinLeagueOnchain } from "@/utils/join_league";
+import {
+  joinInstructionschema,
+  handleJoinLeagueOnchain,
+} from "@/utils/join_league";
+import * as web3 from "@solana/web3.js";
 interface League {
   description: string;
   league_id: string;
@@ -53,43 +57,67 @@ function DashboardPage() {
         const response: League[] = await axios.get(
           "http://localhost:3000/api/leagues"
         );
-        console.log(response);
         setLeagues(response);
       } catch (err) {
         console.log(err);
       }
     })();
   }, []);
- async function handleJoin(leagueId: string, amount: number, league_name: string) {
-    console.log(leagueId);
+  async function handleJoin(
+    leagueId: string,
+    amount: number,
+    league_name: string
+  ) {
     if (!publicKey) {
       throw new Error("Wallet not connected");
     }
     try {
-    //send sol to the league pda.
-      const transaction =await sendSol(league_name, publicKey, amount);
-      const txid = sendTransaction(transaction, connection);
+      //send sol to the league pda.
+      const send_instruction = await sendSol(league_name, publicKey, amount);
       //After sending sol, send join league transaction
-const buffer = Buffer.alloc(1000);
+      const buffer = Buffer.alloc(10000);
+      joinInstructionschema.encode(
+        {
+          variant: 3,
+          league_id: leagueId,
+          league_name: "",
+          creator_id: "creator_id",
+          events_included: 0,
+          user_id: "user_id",
+          manager_id: "manager_id",
+          entry_fee: 0,
+          name: "",
+        },
+        buffer
+      );
+      const instructionBuffer = buffer.subarray(
+        0,
+        joinInstructionschema.getSpan(buffer)
+      );
 
-joinInstructionschema.encode({
-        variant: 0,
-        league_id: leagueId,
-        league_name: "",
-        creator_id: "",
-        events_included: 0,
-        user_id: "user_id",
-        manager_id: "",
-        name: "",
-      
-}, buffer);
-const instructionBuffer = buffer.subarray(0, joinInstructionschema.getspan(buffer));
-const transaction2 = await handleJoinLeagueOnchain(instructionBuffer, publicKey, leagueId);
-const txid2 = sendTransaction(transaction2, connection);
-
-    } catch (e) {
-      console.log("Error occured during join league");
-      console.log(e);
+      const join_instruction = await handleJoinLeagueOnchain(
+        instructionBuffer,
+        publicKey,
+        leagueId
+      );
+      const transaction = new web3.Transaction()
+        .add(send_instruction)
+        .add(join_instruction);
+      const txid = sendTransaction(transaction, connection);
+      console.log("transaction sent", txid);
+      //Join league offchain
+      if (await txid) {
+        const response = await axios.post("/api/join_league", {
+          league_id: leagueId,
+          member_id: publicKey.toBase58(),
+        });
+        if (response.status === 200) {
+          console.log("Joined league successfully");
+        }
+      }
+    } catch (e: any) {
+      console.log("Error occured during join league", e);
+      throw new Error(e.toString());
     }
   }
   return (
@@ -170,13 +198,20 @@ const txid2 = sendTransaction(transaction2, connection);
             {(leagues.data || []).map((elem, index) => {
               return (
                 <TableRow key={elem.league_id}>
-                  <TableCell>{elem.league_name}</TableCell>
+                  <TableCell>{elem.name}</TableCell>
                   <TableCell>Admin</TableCell>
                   <TableCell>{elem.teams}</TableCell>
                   <TableCell>
-                    <Link href="/dashboard/store/see">
-                      <Button>Join</Button>
-                    </Link>
+                    {/* <Link href="/dashboard/store/see"> */}
+                    <Button
+                      onClick={() =>
+                        // TODO: Changed the third argument
+                        handleJoin(elem.league_id, elem.price, elem.league_id)
+                      }
+                    >
+                      Join
+                    </Button>
+                    {/* </Link> */}
                   </TableCell>
                 </TableRow>
               );

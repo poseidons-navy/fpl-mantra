@@ -1,0 +1,40 @@
+{
+    "new_entries": {
+        "has_next": false,
+        "page": 1,
+        "results": []
+    },
+    "last_updated_data": "2024-03-31T18:32:28Z",
+    "league": {
+        "id": 2431113,
+        "name": "testing-league",
+        "created": "2024-03-16T21:43:32.511865Z",
+        "closed": false,
+        "max_entries": null,
+        "league_type": "x",
+        "scoring": "c",
+        "admin_entry": 10364782,
+        "start_event": 1,
+        "code_privacy": "p",
+        "has_cup": true,
+        "cup_league": null,
+        "rank": null
+    },
+    "standings": {
+        "has_next": false,
+        "page": 1,
+        "results": [
+            {
+                "id": 92711654,
+                "event_total": 48,
+                "player_name": "Patrick Ojiambo",
+                "rank": 1,
+                "last_rank": 1,
+                "rank_sort": 1,
+                "total": 784,
+                "entry": 10364782,
+                "entry_name": "Makeit"
+            }
+        ]
+    }
+}
