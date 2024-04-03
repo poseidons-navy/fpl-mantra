@@ -37,7 +37,12 @@ pub enum LeagueInstruction {
         league_id: String,
         user_id: String,
         manager_id: String
-    }
+    },
+    SendMoney{
+        entry_fee: u8,
+        league_id: String,
+    },
+    
 
 }
 
@@ -99,6 +104,10 @@ impl LeagueInstruction {
                 user_id: payload.user_id, 
                 manager_id: payload.manager_id 
 
+            },
+            6 => Self::SendMoney {
+                entry_fee: payload.entry_fee,
+                league_id: payload.league_id
             },
             _ => return Err(ProgramError::InvalidInstructionData),
         })
