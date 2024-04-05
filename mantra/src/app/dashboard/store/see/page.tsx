@@ -2,7 +2,7 @@
 import BackButton from "@/components/back-button";
 
 import React, { useState } from "react";
-
+import { useRouter,useSearchParams } from "next/navigation";
 import { z } from "zod";
 import {
   Table,
@@ -27,12 +27,16 @@ type Schema = z.infer<typeof formSchema>;
 
 function CreateLeague() {
   const [league_members, setLeague_members] = useState<FplData[]>([]);
+  const searchParams = useSearchParams();
+  const league_id = searchParams.get("leagueId");
   React.useEffect(() => {
     (async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/get_leagues",
-          {}
+          `http://localhost:3000/api/get_leagues?leagueId=${league_id}`,
+          {
+            leagueId: league_id
+          }
         );
         setLeague_members(response.data);
       } catch (err) {
@@ -47,10 +51,7 @@ function CreateLeague() {
       </div>
       <div className="flex flex-col w-full  h-full items-center justify-center px-5 ">
         <h2 className="text-lg font-semibold">WAZITO LEAGUE</h2>
-        <p>
-          <i className=" text-zinc-500">Last Updated:</i> Sun 10 Mar 22:12(local
-          time)
-        </p>
+       
         <Table>
           <TableHeader>
             <TableRow>
