@@ -23,16 +23,17 @@ export const db = getFirestore(app);
  * @param email
  * @param wallet_address
  */
+
 export async function createAccounts(
-  manager_id: number,
+  manager_id: string,
   email: string,
- 
+//  wallet_address: string
 ): Promise<string> {
   try {
     const docRef = await addDoc(collection(db, "accounts"), {
       manager_id,
       email,
-      
+  //    wallet_address,
     });
 
     return docRef.id;

@@ -1,6 +1,6 @@
 "use client";
+// import Account from '@/utils/account';
 import BackButton from "@/components/back-button";
-import axios from "axios";
 import {
     FormControl,
     FormField,
@@ -9,44 +9,43 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import WalletContextProvider from "@/components/wallet/WalletContextProvider";
+import { createAccounts } from '@/db/creations';
+// import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 
 const formSchema = z.object({
-    username: z.string(),
-    password: z.string(),
+    manager_id: z.string(),
+    email: z.string()
 });
 
 type Schema = z.infer<typeof formSchema>;
 
 function CreateAccount() {
-    const [loading, setLoading] = useState(false);
-    const { toast } = useToast();
+    // const { connection } = useConnection();
     const form = useForm<Schema>({
         resolver: zodResolver(formSchema),
     });
-    const { publicKey, sendTransaction } = useWallet();
+   // const { publicKey, sendTransaction } = useWallet();
 
     const onSubmit = async (data: Schema) => {
         try {
-            // const response = await axios.get("api/get_leagues", {});
+          // if (!publicKey) {
+          //     console.log("Wallet Not Connected");
+          //     return
+          //   }
 
-            const response = await axios.post("/api/login", {
-                username: data.username,
-                password: data.password,
-            });
-            console.log(response);
+          console.log("OnSubmit")
+          await createAccounts(data.manager_id, data.email);
+          // console.log("Got Transaction");
+          // const txID = sendTransaction(transaction, connection);
+          // console.log(`Transaction sent ${txID}`);
         } catch (e) {
             throw new Error((e as Error).toString());
         }
-        setLoading(true);
     };
 
     return (
@@ -62,18 +61,18 @@ function CreateAccount() {
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="w-full h-full space-y-4"
                     >
-                        {/* Username */}
+                        {/* Email */}
                         <FormField
                             control={form.control}
-                            name="username"
+                            name="email"
                             render={({ }) => {
                                 return (
                                     <FormItem>
-                                        <FormLabel>Username</FormLabel>
+                                        <FormLabel>Email</FormLabel>
                                         <FormControl>
                                             <Input
-                                                {...form.register("username")}
-                                                placeholder="Username"
+                                                {...form.register("email")}
+                                                placeholder="Email"
                                                 type="text"
                                             />
                                         </FormControl>
@@ -83,19 +82,19 @@ function CreateAccount() {
                             }}
                         />
 
-                        {/* Password */}
+                        {/* Manager ID */}
                         <FormField
                             control={form.control}
-                            name="password"
+                            name="manager_id"
                             render={({ }) => {
                                 return (
                                     <FormItem>
-                                        <FormLabel>Password</FormLabel>
+                                        <FormLabel>Manager ID</FormLabel>
                                         <FormControl>
                                             <Input
-                                                {...form.register("password")}
-                                                placeholder="Password"
-                                                type="password"
+                                                {...form.register("manager_id")}
+                                                placeholder="Manager ID"
+                                                type="text"
                                             />
                                         </FormControl>
                                         <FormMessage />

@@ -8,7 +8,7 @@ export interface account {
   manager_id: string
 }
 
-export default class FPLMantraAccount {
+export default class FPLMantraCompetition {
   PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID ?? "");
   constructor() {}
 
@@ -35,16 +35,14 @@ export default class FPLMantraAccount {
     }
   }
 
-  private async createAccountOnChain(publicKey: PublicKey, user_id: string, manager_id: string): Promise<Transaction> {
+  private async createAccountOnChain(publicKey: PublicKey, user_id: string, manager_id: string) {
     try {
       if (!publicKey) {
         throw new Error("Wallet not connected");
       }
 
       const [pda] = this.getAccountPDA(user_id, manager_id);
-      console.log("Account PDA Gotten");
       const instructionBuffer = this.serializeAccountCreate(user_id, manager_id);
-      console.log("Gotten Instruction Buffer");
       const transaction = new Transaction();
       const instruction = new TransactionInstruction({
         keys: [
@@ -82,14 +80,14 @@ export default class FPLMantraAccount {
     }
   }
 
-  async createAccount(email: string, manager_id: string) {
+  async createAccount(publicKey: PublicKey, email: string, manager_id: number) {
     try {
       // Create in DB
-      const user_id = await createAccounts(manager_id, email);
-      console.log("Account Created In DB");
+      const user_id = await createAccounts(manager_id, email, publicKey.toString());
 
       // Create onchain
-      // return await this.createAccountOnChain(publicKey, user_id, manager_id);
+      await this.createAccountOnChain(publicKey, user_id, manager_id.toString())
+      
     } catch(err) {
       console.log("Could Not Create Account", err);
       throw new Error("Could Not Create Account");
