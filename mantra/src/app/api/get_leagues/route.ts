@@ -1,4 +1,5 @@
 import axios from "axios";
+import { NextResponse } from "next/server";
 export async function GET() {
   try {
     console.log("Enpoint hit");
@@ -6,8 +7,11 @@ export async function GET() {
       "https://fantasy.premierleague.com/api/leagues-classic/2431113/standings/",
       {}
     );
-    console.log(response);
+    return NextResponse.json(response.data, { status: 200 });
   } catch (e) {
-    console.log("error: ", e);
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Error occured" },
+      { status: 500 }
+    );
   }
 }
