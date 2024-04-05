@@ -30,14 +30,18 @@ export async function createAccounts(
 //  wallet_address: string
 ): Promise<string> {
   try {
+    console.log("Begining of Create Account");
+
     const docRef = await addDoc(collection(db, "accounts"), {
       manager_id,
       email,
-  //    wallet_address,
     });
+
+    console.log("Created Account Offchain")
 
     return docRef.id;
   } catch (e: any) {
+    console.log(e);
     throw new Error(e);
   }
 }
@@ -89,6 +93,7 @@ export async function joinLeague(league_id: number, member_id: number) {
 
 export async function createCompetitionInDB() {
   try {
+
   } catch (e: any) {
     console.log(e, "Could Not Add Competition to DB");
     throw new Error("Could Not Add Competition To DB");

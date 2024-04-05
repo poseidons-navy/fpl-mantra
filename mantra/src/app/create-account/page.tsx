@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,20 +29,28 @@ function CreateAccount() {
     const form = useForm<Schema>({
         resolver: zodResolver(formSchema),
     });
-   // const { publicKey, sendTransaction } = useWallet();
+    // const { publicKey, sendTransaction } = useWallet();
 
     const onSubmit = async (data: Schema) => {
         try {
-          // if (!publicKey) {
-          //     console.log("Wallet Not Connected");
-          //     return
-          //   }
+            // if (!publicKey) {
+            //     console.log("Wallet Not Connected");
+            //     return
+            //   }
 
-          console.log("OnSubmit")
-          await createAccounts(data.manager_id, data.email);
-          // console.log("Got Transaction");
-          // const txID = sendTransaction(transaction, connection);
-          // console.log(`Transaction sent ${txID}`);
+            if (typeof window !== "undefined" && window.localStorage) {
+                console.log("OnSubmit")
+                localStorage.setItem("manager_id", data.manager_id);
+                const userid = await createAccounts(data.manager_id, data.email);
+                console.log(userid);
+                localStorage.setItem("userid", userid);
+            } else {
+                console.log("No window");
+            }
+
+            // console.log("Got Transaction");
+            // const txID = sendTransaction(transaction, connection);
+            // console.log(`Transaction sent ${txID}`);
         } catch (e) {
             throw new Error((e as Error).toString());
         }
