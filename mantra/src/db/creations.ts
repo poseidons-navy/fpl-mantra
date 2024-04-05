@@ -23,20 +23,25 @@ export const db = getFirestore(app);
  * @param email
  * @param wallet_address
  */
+
 export async function createAccounts(
-  manager_id: number,
+  manager_id: string,
   email: string,
- 
+//  wallet_address: string
 ): Promise<string> {
   try {
+    console.log("Begining of Create Account");
+
     const docRef = await addDoc(collection(db, "accounts"), {
       manager_id,
       email,
-      
     });
+
+    console.log("Created Account Offchain")
 
     return docRef.id;
   } catch (e: any) {
+    console.log(e);
     throw new Error(e);
   }
 }
@@ -88,6 +93,7 @@ export async function joinLeague(league_id: number, member_id: number) {
 
 export async function createCompetitionInDB() {
   try {
+
   } catch (e: any) {
     console.log(e, "Could Not Add Competition to DB");
     throw new Error("Could Not Add Competition To DB");

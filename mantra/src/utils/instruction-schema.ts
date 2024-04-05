@@ -35,5 +35,9 @@ export function encodeInstruction(
     entry_fee,
     name
   }, buffer);
+  const instructionBuffer = buffer.subarray(
+    0,
+    instruction_schema.getSpan(buffer)
+  );
   return buffer
 }
