@@ -15,8 +15,6 @@ export async function getAllLeagueMembers(league_id: string) {
   }
 }
 
-
-
 export async function getLeagues() {
   try {
     console.log("The function is called");
@@ -34,5 +32,15 @@ export async function getCompetitionsFromDB() {
   } catch (e: any) {
     console.log("Could Not Get Competitions", e);
     throw new Error("Could Not Get Competitions From DB");
+  }
+}
+export async function getPublicKey(manager_id: string) {
+  try {
+    const manager = doc(db, "managers", manager_id);
+    const managerData = await getDoc(manager);
+    console.log(managerData.data());
+    return managerData.data();
+  } catch (error: any) {
+    throw new Error(error);
   }
 }

@@ -27,7 +27,7 @@ export const db = getFirestore(app);
 export async function createAccounts(
   manager_id: string,
   email: string,
-//  wallet_address: string
+ wallet_address: string
 ): Promise<string> {
   try {
     console.log("Begining of Create Account");
@@ -35,6 +35,7 @@ export async function createAccounts(
     const docRef = await addDoc(collection(db, "accounts"), {
       manager_id,
       email,
+      wallet_address
     });
 
     console.log("Created Account Offchain")

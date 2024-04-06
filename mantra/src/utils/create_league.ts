@@ -1,5 +1,6 @@
 import * as web3 from "@solana/web3.js";
 import * as borsh from "@project-serum/borsh";
+import { PROGRAM_ID } from "@/utils/program_id";
 export const borshInstructionschema = borsh.struct([
   borsh.u8("variant"),
   borsh.str("league_id"),
@@ -18,7 +19,6 @@ export async function handleCreateLeagueOnchain(
   publicKey: web3.PublicKey,
   league_id: string
 ): Promise<web3.TransactionInstruction> {
-  const PROGRAM_ID = "9SfnmEHEFzTqGj7yzf1Zwzb6EqAWa3ViXNt1xmV3Szt5";
 
   if (!publicKey) {
     throw new Error("Wallet not connected");

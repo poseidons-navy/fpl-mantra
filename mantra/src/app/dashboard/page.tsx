@@ -209,7 +209,7 @@ function DashboardPage() {
                    
                   </TableCell>
                   <TableCell>
-                      <Link href={`/dashboard/store/see?leagueId=${elem.league_id}`}>
+                      <Link href={`/dashboard/store/see?leagueId=${elem.league_id}&code=${elem.joining_data.join_code}&name=${elem.name}`}>
                         <Button >View</Button>
                       </Link>
                     </TableCell>
