@@ -136,14 +136,6 @@ function DashboardPage() {
               {/*balance*/}1 SOL | {/*(balance * 0.14).toFixed(2)*/}128 USD
             </span>
           </div>
-          {/* <CopyText
-                        className='col-span-4'
-                        text={user.walletAddress ?? ""}
-                        title={"Account Address"}
-                        icon='BookUser'
-                        defaultView
-                    />
-                    <DecryptPrivateKey visible={true}/> */}
         </div>
       </div>
 
@@ -192,6 +184,7 @@ function DashboardPage() {
               <TableHead>Creator</TableHead>
               <TableHead>Participants</TableHead>
               <TableHead></TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -211,50 +204,22 @@ function DashboardPage() {
                     >
                       Join
                     </Button>
+
                     {/* </Link> */}
+                   
                   </TableCell>
+                  <TableCell>
+                      <Link href={`/dashboard/store/see?leagueId=${elem.league_id}`}>
+                        <Button >View</Button>
+                      </Link>
+                    </TableCell>
                 </TableRow>
               );
             })}
           </TableBody>
         </Table>
       </div>
-      {/* Purchase History */}
-      <div className="flex flex-col gap-y-4 w-full px-5 py-5">
-        <div className="flex flex-row items-center gap-x-4 w-full">
-          <HistoryIcon stroke="gray" />
-          <h2 className="text-lg font-semibold">
-            Previous Leagues (Completed)
-          </h2>
-        </div>
-
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Creator</TableHead>
-              <TableHead>Participants</TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {
-              /* {purchaseHistory.map((elem, index) => {
-                        return*/ <TableRow /*key={index}*/>
-                <TableCell>Wazito League{/*elem.name*/}</TableCell>
-                <TableCell>Vincent{/*elem.creator.name*/}</TableCell>
-                <TableCell>5{/*elem.genre*/}</TableCell>
-                <TableCell>
-                  <Link href="/dashboard/store/see">
-                    <Button onClick={handleJoin}>Join</Button>
-                  </Link>
-                </TableCell>
-              </TableRow>
-              /*})} */
-            }
-          </TableBody>
-        </Table>
-      </div>
+      
     </div>
   );
 }
