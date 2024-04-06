@@ -91,6 +91,15 @@ export async function joinLeague(league_id: number, member_id: number) {
   }
 }
 
+export async function joinCompetition(competition_id: string, member_id: string) {
+  try {
+    await addDoc(collection(db, "competition_members"), {competition_id, member_id});
+    console.log("Competition Joined");
+  } catch(err) {
+    console.log("Error Joining Competition", err);
+  }
+}
+
 export async function createCompetitionInDB(
   name: string,
   league_id: string,
