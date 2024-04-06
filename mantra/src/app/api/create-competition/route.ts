@@ -1,18 +1,18 @@
-import Account from '@/utils/account';
+import {createCompetitionInDB} from '@/db/creations';
 
 export async function POST(request: Request) {
-  console.log("Create account hit");
-  const account_details = await request.json();
-  console.log(account_details);
+  console.log("Create competition hit");
+  const competition_details = await request.json();
+  console.log(competition_details);
   const {
-    manager_id,
-    email,
-    publicKey
-  } = account_details;
+    name,
+    league_id,
+    creator_id,
+    entry_fee
+  } = competition_details;
   try {
-    let account = new Account();
-    await account.createAccount(publicKey, email, manager_id)
-    return new Response(JSON.stringify({ message: "Created Account" }), { status: 201 });
+    await createCompetitionInDB(name, league_id, creator_id, entry_fee);
+    return new Response(JSON.stringify({ message: "Community Created" }), { status: 201 });
   } catch (e) {
     console.log(e, "Error At Create Account Route");
     return new Response(JSON.stringify({ error: e }), {
