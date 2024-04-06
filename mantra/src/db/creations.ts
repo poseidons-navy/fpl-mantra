@@ -91,9 +91,19 @@ export async function joinLeague(league_id: number, member_id: number) {
   }
 }
 
-export async function createCompetitionInDB() {
+export async function createCompetitionInDB(
+  name: string,
+  league_id: string,
+  creator_id: string,
+  entry_fee: number 
+) {
   try {
-
+    await addDoc(collection(db, "competition"), {
+     name,
+     league_id,
+     creator_id,
+     entry_fee
+    });
   } catch (e: any) {
     console.log(e, "Could Not Add Competition to DB");
     throw new Error("Could Not Add Competition To DB");
