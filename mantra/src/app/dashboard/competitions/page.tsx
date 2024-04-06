@@ -9,9 +9,15 @@ function CreateLeague() {
   const [competitions, setCompetitions] = useState<FirebaseCompetition[]>([]);
   useEffect(() => {
     async function getCompetitions() {
-      console.log("Asking for competitons");
-      let competitionsFromDB = await getCompetitionsFromDB();
-      setCompetitions(competitionsFromDB);
+      try {
+        console.log("Asking for competitons");
+        let competitionsFromDB = await getCompetitionsFromDB();
+        setCompetitions(competitionsFromDB);
+        console.log("Done")
+      } catch(err) {
+        console.log("OHH SHIT");
+        console.log(err)
+      }
     }
 
     getCompetitions();
