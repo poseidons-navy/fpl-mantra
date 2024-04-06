@@ -15,7 +15,18 @@ export async function getAllLeagueMembers(league_id: string) {
   }
 }
 
-
+export async function getLeaguesOfMember(member_id: string){
+  try {
+    const leagues = doc(db, "league_members", member_id);
+    const leagues_snapshot = await getDoc(leagues);
+    const leagues_data = leagues_snapshot.data();
+    console.log(leagues_data);
+    return [];
+  } catch(err) {
+    console.log(err);
+    throw "Could Not Get Leagues Of User"
+  }
+}
 
 export async function getLeagues() {
   try {
@@ -31,6 +42,10 @@ export async function getLeagues() {
 
 export async function getCompetitionsFromDB() {
   try {
+    const competitionCollection = collection(db, "competition");
+    const competitionsSnapshot = await getDocs(competitionCollection);
+    const competitions = competitionsSnapshot.docs.map((doc) => doc.data());
+    return competitions;
   } catch (e: any) {
     console.log("Could Not Get Competitions", e);
     throw new Error("Could Not Get Competitions From DB");
