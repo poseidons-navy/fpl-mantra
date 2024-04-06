@@ -15,7 +15,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import {getLeaguesOfMember} from "@/db/getions";
+// import {getLeaguesOfMember} from "@/db/getions";
 
 const formSchema = z.object({
   name: z.string(),
@@ -37,7 +37,7 @@ function CreateCompetition() {
         if (!manager_id) {
           console.log("Could Not Get Manager ID");
         } else {
-          var leagues = await getLeaguesOfMember(manager_id);
+   //       var leagues = await getLeaguesOfMember(manager_id);
           setLeagues(leagues ?? []);
         }
       }
