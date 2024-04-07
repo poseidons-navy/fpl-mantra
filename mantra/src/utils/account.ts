@@ -21,7 +21,7 @@ export default class FPLMantraAccount {
     }
   }
 
-  private getAccountPDA(user_id: string, manager_id: string): [PublicKey, number] {
+  getAccountPDA(user_id: string, manager_id: string): [PublicKey, number] {
     try {
       const [pda, seed] = PublicKey.findProgramAddressSync(
         [Buffer.from("accounts"), Buffer.from(user_id), Buffer.from(manager_id)], 
