@@ -124,47 +124,13 @@ function Payments() {
       console.error("Error sending transaction", e);
     }
   }
-  async function handleTestPayments() {
-    if(!publicKey){
-      throw new Error("Wallet not connected");
-    }
-    const buffer = Buffer.alloc(1000);
-      borshInstructionschema.encode(
-        {
-          variant: 6,
-          league_id: league.league_id,
-          league_name: "",
-          creator_id: "",
-          events_included: 0,
-          user_id: "",
-          manager_id: "",
-          entry_fee: league.price,
-          name: "",
-        },
-        buffer
-      );
-      const instructionBuffer = buffer.subarray(
-        0,
-        borshInstructionschema.getSpan(buffer)
-      );
-      const instruction = await handlePaymentsOnchain(
-        instructionBuffer,
-        publickey_offchain,//TODO: change to publickey_offchain
-        league.league_id
-      );
-      transaction.add(instruction);
-    };
-    try {
-      const signature = await sendTransaction(transaction, connection);
-      console.log("Signature", signature);
-    } catch (e) {
-      console.error("Error sending transaction", e);
-    }
-  }
+ 
+   
+  
   return (
     <div className="flex flex-col w-full h-full items-center  justify-center ">
       <Button onClick={handlePayments}>Do payments</Button>
-      <Button>TestPayments</Button>
+      
     </div>
   );
 }
