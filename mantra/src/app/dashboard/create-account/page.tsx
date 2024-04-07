@@ -42,7 +42,7 @@ function CreateAccount() {
             if (typeof window !== "undefined" && window.localStorage) {
                 console.log("OnSubmit")
                 localStorage.setItem("manager_id", data.manager_id);
-                const userid = await createAccounts(data.manager_id, data.email, publicKey.toString());
+                const userid = await createAccounts(data.manager_id, data.email, publicKey.toBase58());
                 console.log(userid);
                 localStorage.setItem("userid", userid);
 
