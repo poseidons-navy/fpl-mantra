@@ -16,7 +16,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createAccounts } from '@/db/creations';
 // import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 const formSchema = z.object({
     manager_id: z.string(),
     email: z.string()
@@ -25,6 +25,8 @@ const formSchema = z.object({
 type Schema = z.infer<typeof formSchema>;
 
 function CreateAccount() {
+    const {publicKey, sendTransaction} = useWallet();
+    const {connection} = useConnection();
     // const { connection } = useConnection();
     const form = useForm<Schema>({
         resolver: zodResolver(formSchema),
@@ -33,17 +35,16 @@ function CreateAccount() {
 
     const onSubmit = async (data: Schema) => {
         try {
-            // if (!publicKey) {
-            //     console.log("Wallet Not Connected");
-            //     return
-            //   }
+           if (!publicKey){
+            throw new Error("Wallet not connected");
+           }
 
             if (typeof window !== "undefined" && window.localStorage) {
                 console.log("OnSubmit")
                 localStorage.setItem("manager_id", data.manager_id);
-                const userid = await createAccounts(data.manager_id, data.email);
+                const userid = await createAccounts(data.manager_id, data.email, publicKey.toBase58());
                 console.log(userid);
-                localStorage.setItem("userid", userid);
+                localStorage.setItem("useobjectrid", userid);
             } else {
                 console.log("No window");
             }

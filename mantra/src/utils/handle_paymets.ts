@@ -1,8 +1,7 @@
-import * as web3 from '@solana/web3.js';
-import * as borsh from '@coral-xyz/borsh';
-const PROGRAM_ID = "9SfnmEHEFzTqGj7yzf1Zwzb6EqAWa3ViXNt1xmV3Szt5";
-
-export const  joinInstructionschema = borsh.struct([
+import * as borsh from "@project-serum/borsh";
+import * as web3 from "@solana/web3.js";
+import {PROGRAM_ID} from "./program_id";
+export const borshInstructionschema = borsh.struct([
   borsh.u8("variant"),
   borsh.str("league_id"),
   borsh.str("league_name"),
@@ -14,24 +13,17 @@ export const  joinInstructionschema = borsh.struct([
   borsh.u8("entry_fee"),
   borsh.str("name"),
 ]);
-
-export async function handleJoinLeagueOnchain(
-  buffer: Buffer,
-  publicKey: web3.PublicKey,
-  league_id: string
-): Promise<web3.TransactionInstruction> {
- 
-  if (!publicKey) {
-    throw new Error("Wallet not connected");
-  }
-  console.log("Tried pda");
-  const [pda] = web3.PublicKey.findProgramAddressSync(
-    [Buffer.from("leagues"), Buffer.from(league_id)],
-    new web3.PublicKey(PROGRAM_ID)
-  );
-  console.log("pda generated");
-  
-  console.log("Buffer generated");
+export async function handlePaymentsOnchain( buffer: Buffer,
+    publicKey: web3.PublicKey,
+    league_id: string): Promise<web3.TransactionInstruction>{
+    try{
+        if (!publicKey) {
+            throw new Error("Wallet not connected");
+          }
+          const [pda] = web3.PublicKey.findProgramAddressSync(
+            [Buffer.from("leagues"), Buffer.from(league_id)],
+            new web3.PublicKey(PROGRAM_ID)
+          );
   const instruction = new web3.TransactionInstruction({
     keys: [
       {
@@ -61,4 +53,8 @@ export async function handleJoinLeagueOnchain(
   });
   
   return instruction;
+    }
+    catch(e){
+        throw new Error((e instanceof Error ? e.message : e) as string);
+    }
 }

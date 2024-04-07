@@ -2,7 +2,7 @@
 import BackButton from "@/components/back-button";
 
 import React, { useState } from "react";
-import { useRouter,useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import {
   Table,
@@ -29,14 +29,14 @@ function CreateLeague() {
   const [league_members, setLeague_members] = useState<FplData[]>([]);
   const searchParams = useSearchParams();
   const league_id = searchParams.get("leagueId");
+  const join_code = searchParams.get("code");
+  const name = searchParams.get("name");
   React.useEffect(() => {
     (async () => {
       try {
         const response = await axios.get(
           `http://localhost:3000/api/get_leagues?leagueId=${league_id}`,
-          {
-            leagueId: league_id
-          }
+         
         );
         setLeague_members(response.data);
       } catch (err) {
@@ -50,8 +50,8 @@ function CreateLeague() {
         <BackButton />
       </div>
       <div className="flex flex-col w-full  h-full items-center justify-center px-5 ">
-        <h2 className="text-lg font-semibold">WAZITO LEAGUE</h2>
-       
+        <h2 className="text-lg font-semibold">{name?.toUpperCase()}</h2>
+        <h3 className="text-md font-semibold">Join Code: {join_code}</h3>
         <Table>
           <TableHeader>
             <TableRow>
