@@ -17,21 +17,6 @@ export async function getAllLeagueMembers(league_id: string) {
   }
 }
 
-// export async function getLeaguesOfMember(member_id: string): Promise<FirebaseCompetition[]>{
-//   try {
-//     const q = query(collection(db, "league_members"), where("member_id", "==", member_id));
-//     const querySnapshot = await getDocs(q);
-//     const member_leagues: FirebaseCompetition[] = [];
-//     querySnapshot.forEach((doc) => {
-//       // doc.data() is never undefined for query doc snapshots
-//       console.log(doc.id, "=>", doc.data());
-//    });
-//    return member_leagues;
-//   } catch(err) {
-//     console.log(err);
-//     throw "Could Not Get Leagues Of User"
-//   }
-// }
 
 export async function getLeagues() {
   try {
@@ -56,5 +41,15 @@ export async function getCompetitionsFromDB(): Promise<FirebaseCompetition[]> {
   } catch (e: any) {
     console.log("Could Not Get Competitions", e);
     throw new Error("Could Not Get Competitions From DB");
+  }
+}
+export async function getPublicKey(manager_id: string) {
+  try {
+    const manager = doc(db, "managers", manager_id);
+    const managerData = await getDoc(manager);
+    console.log(managerData.data());
+    return managerData.data();
+  } catch (error: any) {
+    throw new Error(error);
   }
 }

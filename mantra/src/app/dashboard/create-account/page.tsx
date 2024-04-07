@@ -34,10 +34,9 @@ function CreateAccount() {
 
     const onSubmit = async (data: Schema) => {
         try {
-            if (!publicKey) {
-                console.log("Wallet Not Connected");
-                return
-            }
+           if (!publicKey){
+            throw new Error("Wallet not connected");
+           }
 
             if (typeof window !== "undefined" && window.localStorage) {
                 console.log("OnSubmit")
@@ -53,7 +52,6 @@ function CreateAccount() {
                 const transaction = await account.createAccountOnChain(publicKey, userid, data.manager_id);
                 const transHash = await sendTransaction(transaction, connection);
                 console.log(transHash);
-
             } else {
                 console.log("No window");
             }
