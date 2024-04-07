@@ -35,7 +35,7 @@ export async function getCompetitionsFromDB(): Promise<FirebaseCompetition[]> {
     console.log("Getting Competitions FROM DB");
     const competitionCollection = collection(db, "competition");
     const competitionsSnapshot = await getDocs(competitionCollection);
-    const competitions = competitionsSnapshot.docs.map((doc) =>  FirebaseCompetition.fromFirebase(doc.data()));
+    const competitions = competitionsSnapshot.docs.map((doc) =>  FirebaseCompetition.fromFirebase(doc.id ,doc.data()));
     console.log(competitions);
     return competitions;
   } catch (e: any) {

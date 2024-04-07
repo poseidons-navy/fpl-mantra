@@ -27,7 +27,7 @@ export const db = getFirestore(app);
 export async function createAccounts(
   manager_id: string,
   email: string,
- wallet_address: string
+  wallet_address: string
 ): Promise<string> {
   try {
     console.log("Begining of Create Account");
@@ -89,6 +89,15 @@ export async function joinLeague(league_id: number, member_id: number) {
     await addDoc(collection(db, "league_members"), { league_id, member_id });
   } catch (e: any) {
     throw new Error(e);
+  }
+}
+
+export async function joinCompetition(competition_id: string, member_id: string) {
+  try {
+    await addDoc(collection(db, "competition_members"), {competition_id, member_id});
+    console.log("Competition Joined");
+  } catch(err) {
+    console.log("Error Joining Competition", err);
   }
 }
 

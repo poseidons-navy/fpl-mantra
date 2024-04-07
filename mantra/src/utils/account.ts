@@ -9,7 +9,7 @@ export interface account {
 }
 
 export default class FPLMantraAccount {
-  PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID ?? "");
+  PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID ?? process.env.NEXT_PUBLIC_PROGRAM_ID ?? "5jgsuXBRFenZHWKYKdLFzYZeeFhv2fa7m4YwEZfbtD3U");
   constructor() {}
 
   private serializeAccountCreate(user_id: string, manager_id: string): Buffer {
@@ -35,7 +35,7 @@ export default class FPLMantraAccount {
     }
   }
 
-  private async createAccountOnChain(publicKey: PublicKey, user_id: string, manager_id: string): Promise<Transaction> {
+  async createAccountOnChain(publicKey: PublicKey, user_id: string, manager_id: string): Promise<Transaction> {
     try {
       if (!publicKey) {
         throw new Error("Wallet not connected");

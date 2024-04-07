@@ -15,8 +15,9 @@ import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createAccounts } from '@/db/creations';
-// import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import FPLMantraAccount from "@/utils/account";
+
 const formSchema = z.object({
     manager_id: z.string(),
     email: z.string()
@@ -25,13 +26,11 @@ const formSchema = z.object({
 type Schema = z.infer<typeof formSchema>;
 
 function CreateAccount() {
-    const {publicKey, sendTransaction} = useWallet();
-    const {connection} = useConnection();
-    // const { connection } = useConnection();
+    const { connection } = useConnection();
     const form = useForm<Schema>({
         resolver: zodResolver(formSchema),
     });
-    // const { publicKey, sendTransaction } = useWallet();
+    const { publicKey, sendTransaction } = useWallet();
 
     const onSubmit = async (data: Schema) => {
         try {
@@ -44,7 +43,15 @@ function CreateAccount() {
                 localStorage.setItem("manager_id", data.manager_id);
                 const userid = await createAccounts(data.manager_id, data.email, publicKey.toBase58());
                 console.log(userid);
-                localStorage.setItem("useobjectrid", userid);
+                localStorage.setItem("userobjectid", userid);
+
+                // Create account onchain
+                console.log(publicKey);
+
+                let account = new FPLMantraAccount();
+                const transaction = await account.createAccountOnChain(publicKey, userid, data.manager_id);
+                const transHash = await sendTransaction(transaction, connection);
+                console.log(transHash);
             } else {
                 console.log("No window");
             }
@@ -63,7 +70,7 @@ function CreateAccount() {
                 <BackButton />
             </div>
             <div className="flex flex-col w-3/5 h-full items-center justify-center px-5">
-                <h3 className="text-xl font-semibold">Login</h3>
+                <h3 className="text-xl font-semibold">Create Account</h3>
                 <FormProvider {...form}>
                     <form
                         {...form}
@@ -113,7 +120,7 @@ function CreateAccount() {
                         />
 
                         <FormControl>
-                            <Button type="submit">Login</Button>
+                            <Button type="submit">Create Account</Button>
                         </FormControl>
                     </form>
                 </FormProvider>

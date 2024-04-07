@@ -1,16 +1,5 @@
 import * as borsh from "@coral-xyz/borsh";
-
-const instruction_schema = borsh.struct([
- borsh.u8("variant"),
- borsh.str("league_id"),
- borsh.str("creator_id"),
- borsh.str("league_name"),
- borsh.u8("events_included"),
- borsh.str("user_id"),
- borsh.str("manager_id"),
- borsh.u64("entry_fee"),
- borsh.str("name")
-]);
+import { borshInstructionschema } from "./create_league";
 
 export function encodeInstruction(
   variant: number,
@@ -23,8 +12,8 @@ export function encodeInstruction(
   entry_fee: number,
   name: string
 ): Buffer {
-  var buffer = Buffer.alloc(1000);
-  instruction_schema.encode({
+  var buffer = Buffer.alloc(10000);
+  borshInstructionschema.encode({
     variant,
     league_id,
     creator_id,
@@ -37,7 +26,7 @@ export function encodeInstruction(
   }, buffer);
   const instructionBuffer = buffer.subarray(
     0,
-    instruction_schema.getSpan(buffer)
+    borshInstructionschema.getSpan(buffer)
   );
-  return buffer
+  return instructionBuffer
 }
