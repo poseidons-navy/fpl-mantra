@@ -44,7 +44,7 @@ function CreateAccount() {
                 localStorage.setItem("manager_id", data.manager_id);
                 const userid = await createAccounts(data.manager_id, data.email, publicKey.toBase58());
                 console.log(userid);
-                localStorage.setItem("userid", userid);
+                localStorage.setItem("userobjectid", userid);
 
                 // Create account onchain
                 console.log(publicKey);
