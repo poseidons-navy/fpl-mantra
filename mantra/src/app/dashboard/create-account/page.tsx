@@ -72,7 +72,7 @@ function CreateAccount() {
                 <BackButton />
             </div>
             <div className="flex flex-col w-3/5 h-full items-center justify-center px-5">
-                <h3 className="text-xl font-semibold">Login</h3>
+                <h3 className="text-xl font-semibold">Create Account</h3>
                 <FormProvider {...form}>
                     <form
                         {...form}
@@ -122,7 +122,7 @@ function CreateAccount() {
                         />
 
                         <FormControl>
-                            <Button type="submit">Login</Button>
+                            <Button type="submit">Create Account</Button>
                         </FormControl>
                     </form>
                 </FormProvider>
