@@ -81,12 +81,54 @@ function Payments() {
       const manager_id = response.data.standings.results[0].entry;
       console.log(manager_id);
       //check the publickey of the manager using manager_id
-      let publickey_offchain = await getPublicKey(manager_id);
+      let user = await getPublicKey(manager_id);
+      if(!user)
+        {
+          throw new Error("User not found");
+        }
+      let publickey_offchain = user[0].publickey;
       if (!publickey_offchain) {
         throw new Error("Public key not found");
       }
       publickey_offchain = new web3.PublicKey(publickey_offchain);
-      const buffer = Buffer.alloc(10000);
+      const buffer = Buffer.alloc(1000);
+      borshInstructionschema.encode(
+        {
+          variant: 6,
+          league_id: league.league_id,
+          league_name: "",
+          creator_id: "",
+          events_included: 0,
+          user_id: "",
+          manager_id: "",
+          entry_fee: league.price,
+          name: "",
+        },
+        buffer
+      );
+      const instructionBuffer = buffer.subarray(
+        0,
+        borshInstructionschema.getSpan(buffer)
+      );
+      const instruction = await handlePaymentsOnchain(
+        instructionBuffer,
+        publickey_offchain,//TODO: change to publickey_offchain
+        league.league_id
+      );
+      transaction.add(instruction);
+    };
+    try {
+      const signature = await sendTransaction(transaction, connection);
+      console.log("Signature", signature);
+    } catch (e) {
+      console.error("Error sending transaction", e);
+    }
+  }
+  async function handleTestPayments() {
+    if(!publicKey){
+      throw new Error("Wallet not connected");
+    }
+    const buffer = Buffer.alloc(1000);
       borshInstructionschema.encode(
         {
           variant: 6,
@@ -122,6 +164,7 @@ function Payments() {
   return (
     <div className="flex flex-col w-full h-full items-center  justify-center ">
       <Button onClick={handlePayments}>Do payments</Button>
+      <Button>TestPayments</Button>
     </div>
   );
 }
