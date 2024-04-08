@@ -24,6 +24,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { set } from "lodash";
@@ -69,7 +71,10 @@ function DashboardPage() {
     amount: number,
     league_name: string
   ) {
+   
     if (!publicKey) {
+      alert("Wallet not connected");
+
       throw new Error("Wallet not connected");
     }
     try {
@@ -120,10 +125,14 @@ function DashboardPage() {
         });
         if (response.status === 200) {
           console.log("Joined league successfully");
+          
+          alert("Joined league successfully");
         }
       }
     } catch (e: any) {
       console.log("Error occured during join league", e);
+      alert("Error occured during join league");
+
       throw new Error(e.toString());
     }
   }
@@ -132,15 +141,15 @@ function DashboardPage() {
       {/* Wallet Section */}
       <div className="flex flex-col w-full space-y-5 ring-1 ring-amber-800 rounded-md shadow-lg px-5 py-5 ">
         <div className="flex flex-row justify-between">
-          <h2 className="text-xl font-semibold">Solana Wallet</h2>
+          <h2 className="text-xl font-semibold"></h2>
         </div>
         <div className="grid grid-cols-4 w-full gap-y-4">
           <div className="col-span-4 flex flex-row items-center justify-between">
             <div className="flex flex-row items-center gap-x-5">
-              <span className="font-semibold text-lg">Current Balance</span>
+              <span className=" text-lg">After joining a league successfully, click on view to get the invite code to join the league on the official FPL site</span>
             </div>
             <span>
-              {/*balance*/}1 SOL | {/*(balance * 0.14).toFixed(2)*/}128 USD
+             
             </span>
           </div>
         </div>
@@ -148,30 +157,7 @@ function DashboardPage() {
 
       {/*Create or Join Existing league*/}
       <div className="flex flex-row items-center gap-x-4 w-full">
-        <div>
-          <Dialog>
-            <DialogTrigger>
-              <Button>Join existing league</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Join an existing league</DialogTitle>
-                <DialogDescription>
-                  Enter league code to join the league. Make sure you have
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex flex-col w-full gap-y-2 ">
-                <Input
-                  /*onChange={(e) => setPassword(e.target.value)}*/ placeholder="League code..."
-                  type="password"
-                />
-                <Button variant={"default"} /*onClick={handleDecrypt}*/>
-                  Join!
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+        
 
         <Link href="/dashboard/store/new" legacyBehavior>
           <Button>Create new league</Button>
@@ -207,6 +193,7 @@ function DashboardPage() {
                       onClick={() =>
                         // TODO: Changed the third argument
                         handleJoin(elem.league_id, elem.price, elem.league_id)
+                        
                       }
                     >
                       Join

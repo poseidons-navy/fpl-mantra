@@ -35,6 +35,7 @@ function CreateAccount() {
     const onSubmit = async (data: Schema) => {
         try {
            if (!publicKey){
+            alert("Wallet not connected");
             throw new Error("Wallet not connected");
            }
 
@@ -52,6 +53,7 @@ function CreateAccount() {
                 const transaction = await account.createAccountOnChain(publicKey, userid, data.manager_id);
                 const transHash = await sendTransaction(transaction, connection);
                 console.log(transHash);
+                alert("Account Created");
             } else {
                 console.log("No window");
             }
@@ -60,6 +62,7 @@ function CreateAccount() {
             // const txID = sendTransaction(transaction, connection);
             // console.log(`Transaction sent ${txID}`);
         } catch (e) {
+            alert("Error occured");
             throw new Error((e as Error).toString());
         }
     };
