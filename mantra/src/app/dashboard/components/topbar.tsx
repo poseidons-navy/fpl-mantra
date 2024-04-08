@@ -40,14 +40,9 @@ function DashboardTopBar() {
         <LogOut
           className="group-hover:text-neutral-100"
           onClick={() => {
-            //localStorage.removeItem(LocalStorageKeys.USER_ADDRESS);
             router.push("/");
           }}
-          onClick={() =>
-            signOut({
-              callbackUrl: "/",
-            })
-          }
+       
         />
       </div>
     </div>
