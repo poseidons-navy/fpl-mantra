@@ -31,6 +31,7 @@ export default function LoginDialog() {
             setIsLoggedIn(false);
             return
           }
+          localStorage.setItem("manager_id", account[0].manager_id)
           router.push('/dashboard');
         } catch(err) {
           console.log("Error", err);
