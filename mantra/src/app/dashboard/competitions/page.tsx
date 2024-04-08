@@ -42,7 +42,6 @@ function CreateLeague() {
                 <h2 className='text-lg font-semibold' >
                     COMPETITIONS
                 </h2>
-                <p><i className=' text-zinc-500'>Last Updated:</i> Sun 10 Mar 22:12(local time)</p>
                 <Table>
                 <TableHeader>
                     <TableRow>
