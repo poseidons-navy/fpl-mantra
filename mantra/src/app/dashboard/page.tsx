@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import { set } from "lodash";
 import { sendSol } from "@/utils/handle_league_payments";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {

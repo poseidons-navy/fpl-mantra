@@ -14,8 +14,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import {getCompetitionsFromDB, getLeagues} from "@/db/getions";
-import {DocumentData} from "firebase/firestore";
-import FPLMantraCompetition from "@/utils/competition";
 import {FirebaseCompetition} from "@/utils/firebase-types";
 const formSchema = z.object({
   competition_id: z.string(),

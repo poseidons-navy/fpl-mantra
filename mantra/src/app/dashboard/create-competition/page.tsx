@@ -79,7 +79,7 @@ function CreateCompetition() {
               let creator_id = localStorage.getItem("userobjectid") ?? "";
               const transaction = await competition.createAccountOnChain(publicKey, data.name, data.league_id, data.entry_fee, creator_id, manager_id);
               const competitionPDA = competition.getCompetitionPDA(data.league_id, data.name)[0];
-              const solTransferInstruction = await returnSendSolInstruction(competitionPDA, publicKey, data.entry_fee * 0.1);
+              const solTransferInstruction = await returnSendSolInstruction(competitionPDA, publicKey, data.entry_fee);
               transaction.add(solTransferInstruction);
               const transHash = await sendTransaction(transaction, connection);
               console.log(`Transaction complete: ${transHash}`);
