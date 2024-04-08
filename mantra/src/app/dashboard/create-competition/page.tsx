@@ -20,6 +20,7 @@ import {DocumentData} from "firebase/firestore";
 import FPLMantraCompetition from "@/utils/competition";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import returnSendSolInstruction from "@/utils/sendSol";
+import { useRouter } from "next/navigation";
 // import {getLeaguesOfMember} from "@/db/getions";
 
 const formSchema = z.object({
@@ -37,6 +38,7 @@ function CreateCompetition() {
     const [leagues, setLeagues] = useState<DocumentData>([]);
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
+    const router = useRouter();
 
     useEffect(() => {
       async function fetchUsersLeagues() {
