@@ -79,14 +79,13 @@ function Payments() {
        
       );
       const manager_id = response.data.standings.results[0].entry;
-      console.log(manager_id);
       //check the publickey of the manager using manager_id
-      let user = await getPublicKey(manager_id);
+      let user = await getPublicKey(manager_id.toString());
       if(!user)
         {
           throw new Error("User not found");
         }
-      let publickey_offchain = user[0].publickey;
+      let publickey_offchain = user[0].wallet_address;
       if (!publickey_offchain) {
         throw new Error("Public key not found");
       }
@@ -113,10 +112,14 @@ function Payments() {
       const instruction = await handlePaymentsOnchain(
         instructionBuffer,
         publickey_offchain,//TODO: change to publickey_offchain
+        publicKey,
         league.league_id
       );
       transaction.add(instruction);
+      console.log(league.league_id);
+      console.log(instruction);
     };
+    console.log(transaction);
     try {
       const signature = await sendTransaction(transaction, connection);
       console.log("Signature", signature);

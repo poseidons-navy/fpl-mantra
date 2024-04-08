@@ -45,11 +45,33 @@ export async function getCompetitionsFromDB(): Promise<FirebaseCompetition[]> {
 }
 export async function getPublicKey(manager_id: string) {
   try {
-    const manager = doc(db, "managers", manager_id);
-    const managerData = await getDoc(manager);
-    console.log(managerData.data());
-    return managerData.data();
+    if (!manager_id) {
+      throw new Error('Manager ID is not defined');
+    }
+    console.log(manager_id);
+    const managerQuery = query(collection(db, "accounts"), where("manager_id", "==", manager_id));
+    const managerSnapshot = await getDocs(managerQuery);
+    const managerData = managerSnapshot.docs.map((doc) => doc.data());
+    console.log(managerData);
+    return managerData;
   } catch (error: any) {
+    console.log("Error occurred while getting public key");
+    throw new Error(error);
+  }
+}
+export async function getManagerId(manager_id: string) {
+  try {
+    if (!manager_id) {
+      throw new Error('Manager ID is not defined');
+    }
+    console.log(manager_id);
+    const managerQuery = query(collection(db, "accounts"), where("wallet_address", "==", manager_id));
+    const managerSnapshot = await getDocs(managerQuery);
+    const managerData = managerSnapshot.docs.map((doc) => doc.data());
+    console.log(managerData);
+    return managerData;
+  } catch (error: any) {
+    console.log("Error occurred while getting public key");
     throw new Error(error);
   }
 }

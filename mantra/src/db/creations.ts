@@ -12,7 +12,8 @@ const firebaseConfig = {
   appId: process.env.APP_ID ?? process.env.NEXT_PUBLIC_APP_ID,
   measurementId: process.env.MEASUREMENT_ID ?? process.env.NEXT_PUBLIC_MEASUREMENT_ID,
 };
-
+console.log("We here");
+console.log(process.env.API_KEY);
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);

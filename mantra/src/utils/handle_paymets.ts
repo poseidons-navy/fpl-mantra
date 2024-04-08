@@ -15,6 +15,7 @@ export const borshInstructionschema = borsh.struct([
 ]);
 export async function handlePaymentsOnchain( buffer: Buffer,
     publicKey: web3.PublicKey,
+    admin: web3.PublicKey,
     league_id: string): Promise<web3.TransactionInstruction>{
     try{
         if (!publicKey) {
@@ -26,12 +27,13 @@ export async function handlePaymentsOnchain( buffer: Buffer,
           );
   const instruction = new web3.TransactionInstruction({
     keys: [
+      
       {
         pubkey: publicKey,
 
-        isSigner: true,
+        isSigner: false,
 
-        isWritable: false,
+        isWritable: true,
       },
       {
         pubkey: pda,

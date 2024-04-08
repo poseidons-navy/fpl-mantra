@@ -1,7 +1,6 @@
 import * as web3 from '@solana/web3.js';
 import * as borsh from '@coral-xyz/borsh';
-const PROGRAM_ID = "9SfnmEHEFzTqGj7yzf1Zwzb6EqAWa3ViXNt1xmV3Szt5";
-
+import { PROGRAM_ID } from './program_id';
 export const  joinInstructionschema = borsh.struct([
   borsh.u8("variant"),
   borsh.str("league_id"),

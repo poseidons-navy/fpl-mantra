@@ -34,6 +34,7 @@ import {
   handleJoinLeagueOnchain,
 } from "@/utils/join_league";
 import * as web3 from "@solana/web3.js";
+import { getManagerId } from "@/db/getions";
 interface League {
   description: string;
   league_id: string;
@@ -72,6 +73,12 @@ function DashboardPage() {
       throw new Error("Wallet not connected");
     }
     try {
+      let user = await getManagerId(publicKey.toBase58());
+      if(!user)
+        {
+          throw new Error("User not found");
+        }
+      let user_id = user[0].manager_id;
       //send sol to the league pda.
       const send_instruction = await sendSol(league_name, publicKey, amount);
       //After sending sol, send join league transaction
@@ -81,10 +88,10 @@ function DashboardPage() {
           variant: 3,
           league_id: leagueId,
           league_name: "",
-          creator_id: "creator_id",
+          creator_id: user_id,
           events_included: 0,
-          user_id: "user_id",
-          manager_id: "manager_id",
+          user_id: user_id,
+          manager_id: user_id,
           entry_fee: 0,
           name: "",
         },

@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     );
     return NextResponse.json(response.data, { status: 200 });
   } catch (e) {
+    console.log("error occured during fetching leagues", e);
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Error occured" },
       { status: 500 }
