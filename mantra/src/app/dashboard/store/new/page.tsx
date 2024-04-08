@@ -49,6 +49,7 @@ function CreateLeague() {
 
   const onSubmit = async (data: Schema) => {
     if (!publicKey) {
+      alert("Wallet not connected");
       throw new Error("Wallet not connected");
     }
     //TODO: Add max_teams to database, add description to database
@@ -123,9 +124,11 @@ function CreateLeague() {
         const txid = sendTransaction(transaction, connection);
         console.log("transaction sent", txid);
       }
+      alert("League created successfully");
       console.log(response);
     } catch (e: any) {
       console.log("Error occure in one of the instructions", e);
+      alert("Error creating league");
       throw new Error(e.toString());
     }
     setLoading(true);
