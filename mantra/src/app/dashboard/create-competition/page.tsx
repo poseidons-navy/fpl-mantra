@@ -1,5 +1,4 @@
 "use client";
-// import Account from '@/utils/account';
 import BackButton from "@/components/back-button";
 import {
     FormControl,
@@ -19,9 +18,7 @@ import axios from "axios";
 import {getLeagues} from "@/db/getions";
 import {DocumentData} from "firebase/firestore";
 import FPLMantraCompetition from "@/utils/competition";
-import {publicKey} from "@coral-xyz/borsh";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import returnSendSolTransaction from "@/utils/sendSol";
 import returnSendSolInstruction from "@/utils/sendSol";
 // import {getLeaguesOfMember} from "@/db/getions";
 
@@ -86,6 +83,7 @@ function CreateCompetition() {
 
               if (response.status === 201) {
                 console.log("Competition Created");
+                router.push("/dashboard");
               } else {
                 console.log("Could Not Create Competition");
               }

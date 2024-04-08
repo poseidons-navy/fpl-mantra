@@ -3,8 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import clsx from "clsx";
 import { LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import React  from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 // import {AppContext} from '@/app/app-context'
 // import { truncateString } from '@/app/helpers/truncate_string'

@@ -17,6 +17,11 @@ export async function getAllLeagueMembers(league_id: string) {
   }
 }
 
+interface Account {
+  wallet_address: string,
+  manager_id: string,
+  user_id: string
+}
 
 export async function getLeagues() {
   try {

@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createAccounts } from '@/db/creations';
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import FPLMantraAccount from "@/utils/account";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     manager_id: z.string(),
@@ -26,6 +27,7 @@ type Schema = z.infer<typeof formSchema>;
 
 function CreateAccount() {
     const { connection } = useConnection();
+    const router = useRouter();
     const form = useForm<Schema>({
         resolver: zodResolver(formSchema),
     });
@@ -52,7 +54,9 @@ function CreateAccount() {
                 const transaction = await account.createAccountOnChain(publicKey, userid, data.manager_id);
                 const transHash = await sendTransaction(transaction, connection);
                 console.log(transHash);
+
                 alert("Account Created");
+                router.push("/dashboard");
             } else {
                 console.log("No window");
             }
