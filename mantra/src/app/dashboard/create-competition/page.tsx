@@ -9,12 +9,18 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectScrollUpButton, SelectGroup, SelectLabel, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import {getLeagues} from "@/db/getions";
+import {DocumentData} from "firebase/firestore";
+import FPLMantraCompetition from "@/utils/competition";
+import {publicKey} from "@coral-xyz/borsh";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 // import {getLeaguesOfMember} from "@/db/getions";
 
 const formSchema = z.object({
@@ -29,7 +35,9 @@ function CreateCompetition() {
     const form = useForm<Schema>({
         resolver: zodResolver(formSchema),
     });
-    const [leagues, setLeagues] = useState([]);
+    const [leagues, setLeagues] = useState<DocumentData>([]);
+    const { connection } = useConnection();
+    const { publicKey, sendTransaction } = useWallet();
 
     useEffect(() => {
       async function fetchUsersLeagues() {
@@ -37,7 +45,8 @@ function CreateCompetition() {
         if (!manager_id) {
           console.log("Could Not Get Manager ID");
         } else {
-   //       var leagues = await getLeaguesOfMember(manager_id);
+          var leagues = await getLeagues();
+          console.log(leagues);
           setLeagues(leagues ?? []);
         }
       }
@@ -49,16 +58,26 @@ function CreateCompetition() {
     const onSubmit = async (data: Schema) => {
         try {
           console.log("OnSubmit");
+          if (!publicKey) {
+            console.log("Wallet Not Connected");
+            return;
+          }
             if (typeof window !== "undefined" && window.localStorage) {
-              const manager_id = localStorage.getItem("manager_id");
-              console.log(`Manager ID is ${manager_id}`);
+              const manager_id = localStorage.getItem("manager_id") ?? "";
+              console.log("Form Data", data);
               const response = await axios.post("/api/create-competition", {
                 creator_id: manager_id,
                 entry_fee: data.entry_fee,
                 league_id: data.league_id,
                 name: data.name
               });
-              console.log("Create Competition Done");
+
+              // Create competition offchain
+              const competition = new FPLMantraCompetition();
+              let creator_id = localStorage.getItem("userobjectid") ?? "";
+              const transaction = await competition.createAccountOnChain(publicKey, data.name, data.league_id, data.entry_fee, creator_id, manager_id);
+              const transHash = await sendTransaction(transaction, connection);
+              console.log(`Transaction complete: ${transHash}`);
 
               if (response.status === 201) {
                 console.log("Competition Created");
@@ -72,6 +91,12 @@ function CreateCompetition() {
             throw new Error((e as Error).toString());
         }
     };
+
+    const leagueSelectItems = leagues.map((l: DocumentData) => {
+      return (
+        <SelectItem value={l.league_id} >{l.name}</SelectItem>
+      );
+    })
 
     return (
         <div className="flex flex-col items-center justify-center">
@@ -106,28 +131,32 @@ function CreateCompetition() {
                                 );
                             }}
                         />
-                        
-                        {/* League ID */}
-                        <FormField
-                            control={form.control}
-                            name="league_id"
-                            render={({ }) => {
-                                return (
-                                    <FormItem>
-                                        <FormLabel>League ID</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...form.register("league_id")}
-                                                placeholder="League ID"
-                                                type="number"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                );
-                            }}
-                        /> 
 
+                        <FormField
+                          control={form.control}
+                          name="league_id"
+                          render={({ field }) => {
+                            return(
+                              <FormItem>
+                                <FormLabel>League</FormLabel>
+                                <FormControl>
+                                  <Select onValueChange={field.onChange} {...field}>
+                                    <SelectTrigger aria-label="leagues">
+                                      <SelectValue placeholder="Select League" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-white">
+                                      <SelectScrollUpButton/>
+                                      <SelectGroup>
+                                        <SelectLabel>Leagues</SelectLabel>
+                                        {leagueSelectItems}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                              </FormItem>
+                            );
+                          }}/>
+          
                         {/* Entry Fee */}
                         <FormField
                             control={form.control}
