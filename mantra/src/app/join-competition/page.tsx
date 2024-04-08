@@ -67,9 +67,9 @@ export default function JoinCompetition() {
             throw new Error((e as Error).toString());
         }
     };
-    const competitionItems = competitions.map((c: FirebaseCompetition) => {
+    const competitionItems = competitions.map((c: FirebaseCompetition, index: number) => {
       return (
-        <SelectItem value={c.competition_id}>{c.competition_name}</SelectItem>
+        <SelectItem key={index} value={c.competition_id}>{c.competition_name}</SelectItem>
       );
     })
 

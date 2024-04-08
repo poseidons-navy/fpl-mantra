@@ -92,9 +92,9 @@ function CreateCompetition() {
         }
     };
 
-    const leagueSelectItems = leagues.map((l: DocumentData) => {
+    const leagueSelectItems = leagues.map((l: DocumentData, index: number) => {
       return (
-        <SelectItem value={l.league_id} >{l.name}</SelectItem>
+        <SelectItem key={index} value={l.league_id} >{l.name}</SelectItem>
       );
     })
 

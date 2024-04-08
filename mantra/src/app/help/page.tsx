@@ -13,7 +13,7 @@ const Instructions = () => {
       <section className="max-w-4xl mb-8">
         <h1 className="text-3xl font-bold mb-4">Sign up and getting Manager ID</h1>
         <p className="text-lg mb-4">
-          <strong>Step 1:</strong> From the homepage, select <strong>Sign Up</strong>. You will be redirected to the Fantasy Premier League app. Create a new account if you don't have one or sign in if you are already a member.
+          <strong>Step 1:</strong> From the homepage, select <strong>Sign Up</strong>. You will be redirected to the Fantasy Premier League app. Create a new account if you dont have one or sign in if you are already a member.
         </p>
         <p className="text-lg mb-4">
           <strong>Step 2:</strong> From the navigation menus, select <strong>Points</strong>.
