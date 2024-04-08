@@ -24,6 +24,7 @@ export default function LoginDialog() {
             return
           }
           const account = await getManagerId(publicKey.toBase58());
+          console.log(account);
           if (!account || account.length === 0) {
             console.log("Do Not Have An Account");
             setNotHaveAccount(true)
