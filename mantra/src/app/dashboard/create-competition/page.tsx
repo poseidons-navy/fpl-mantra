@@ -18,6 +18,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import {getLeagues} from "@/db/getions";
 import {DocumentData} from "firebase/firestore";
+import FPLMantraCompetition from "@/utils/competition";
+import {publicKey} from "@coral-xyz/borsh";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 // import {getLeaguesOfMember} from "@/db/getions";
 
 const formSchema = z.object({
@@ -33,6 +36,8 @@ function CreateCompetition() {
         resolver: zodResolver(formSchema),
     });
     const [leagues, setLeagues] = useState<DocumentData>([]);
+    const { connection } = useConnection();
+    const { publicKey, sendTransaction } = useWallet();
 
     useEffect(() => {
       async function fetchUsersLeagues() {
@@ -53,8 +58,12 @@ function CreateCompetition() {
     const onSubmit = async (data: Schema) => {
         try {
           console.log("OnSubmit");
+          if (!publicKey) {
+            console.log("Wallet Not Connected");
+            return;
+          }
             if (typeof window !== "undefined" && window.localStorage) {
-              const manager_id = localStorage.getItem("manager_id");
+              const manager_id = localStorage.getItem("manager_id") ?? "";
               console.log("Form Data", data);
               const response = await axios.post("/api/create-competition", {
                 creator_id: manager_id,
@@ -62,7 +71,13 @@ function CreateCompetition() {
                 league_id: data.league_id,
                 name: data.name
               });
-              console.log("Create Competition Done");
+
+              // Create competition offchain
+              const competition = new FPLMantraCompetition();
+              let creator_id = localStorage.getItem("userobjectid") ?? "";
+              const transaction = await competition.createAccountOnChain(publicKey, data.name, data.league_id, data.entry_fee, creator_id, manager_id);
+              const transHash = await sendTransaction(transaction, connection);
+              console.log(`Transaction complete: ${transHash}`);
 
               if (response.status === 201) {
                 console.log("Competition Created");
@@ -123,7 +138,7 @@ function CreateCompetition() {
                           render={({ field }) => {
                             return(
                               <FormItem>
-                                <FormLabel>League ID</FormLabel>
+                                <FormLabel>League</FormLabel>
                                 <FormControl>
                                   <Select onValueChange={field.onChange} {...field}>
                                     <SelectTrigger aria-label="leagues">
