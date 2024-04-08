@@ -1,6 +1,5 @@
 "use client";
 // import Account from '@/utils/account';
-import BackButton from "@/components/back-button";
 import {
     FormControl,
     FormField,
@@ -66,9 +65,7 @@ function CreateAccount() {
 
     return (
         <div className="flex flex-col items-center justify-center">
-            <div className="flex flex-row items-center justify-start w-full">
-                <BackButton />
-            </div>
+            
             <div className="flex flex-col w-3/5 h-full items-center justify-center px-5">
                 <h3 className="text-xl font-semibold">Create Account</h3>
                 <FormProvider {...form}>
