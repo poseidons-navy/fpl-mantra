@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   let pubKey = new PublicKey(publicKey);
   try {
     let account = new Account();
-    const transaction = await account.createAccount(pubKey, email, manager_id);
+    const transaction = await account.createAccount(pubKey.toBase58(), email, manager_id);
     const txID = sendTransaction(transaction, connection);
     console.log(`Transaction sent ${txID}`);
     return new Response(JSON.stringify({ message: "Created Account" }), { status: 201 });
