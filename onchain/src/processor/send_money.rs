@@ -19,6 +19,7 @@ pub fn send_money(
     msg!("Send money to winner");
     let in_lamports = amount as u64 * 1000000000;
     let account_info_iter = &mut accounts.iter();
+    let payer = next_account_info(account_info_iter)?;
     let to_account = next_account_info(account_info_iter)?;
     let pda = next_account_info(account_info_iter)?;
     let system_account = next_account_info(account_info_iter)?;
@@ -26,7 +27,7 @@ pub fn send_money(
     let ix = transfer(pda.key, to_account.key, in_lamports.into());
     invoke_signed(
         &ix,
-        &[to_account.clone(), pda.clone(), system_account.clone()],
+        &[pda.clone(), to_account.clone(), system_account.clone()],
         &[&[
             "leagues".as_bytes().as_ref(),
             league_id.as_bytes().as_ref(),
