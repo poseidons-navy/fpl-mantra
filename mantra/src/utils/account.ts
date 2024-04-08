@@ -82,10 +82,10 @@ export default class FPLMantraAccount {
     }
   }
 
-  async createAccount(email: string, manager_id: string) {
+  async createAccount(wallet_address: string, email: string, manager_id: string) {
     try {
       // Create in DB
-      const user_id = await createAccounts(manager_id, email);
+      const user_id = await createAccounts(manager_id, email, wallet_address);
       console.log("Account Created In DB");
 
       // Create onchain
