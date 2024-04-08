@@ -1,11 +1,8 @@
 "use client"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavigationLink from "@/components/ui/navigation-link";
-import { Medal, Star, CandlestickChart, KeyIcon,Heart, LibrarySquare, LogOut, PackageOpen, StoreIcon, UserIcon, Users} from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { Medal, Star, UserIcon, Users} from "lucide-react";
 import { ReactNode } from "react";
 import DashboardTopBar from "./components/topbar";
-import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import WalletContextProvider from "@/components/wallet/WalletContextProvider";
 
 interface Props {
@@ -41,6 +38,12 @@ export default function DashboardLayout(props: Props){
                         title={"My Leagues"}
                         link="/dashboard/store"
                         icon={Medal} 
+                    />
+
+                    <NavigationLink 
+                      title={"Competitions"}
+                      link="/dashboard/competitions"
+                      icon={Users}
                     />
                                        
                 </div>

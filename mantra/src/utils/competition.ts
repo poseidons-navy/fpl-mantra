@@ -16,7 +16,7 @@ export default class FPLMantraCompetition {
     }
   }
 
-  private getCompetitionPDA(league_id: string, name: string): [PublicKey, number] {
+  getCompetitionPDA(league_id: string, name: string): [PublicKey, number] {
     try {
       const [pda, seed] = PublicKey.findProgramAddressSync(
         [Buffer.from("community"), Buffer.from(league_id), Buffer.from(name)], 
@@ -30,7 +30,7 @@ export default class FPLMantraCompetition {
     }
   }
 
-  private getCompetitionJackpotAccountPDA(name: string, league_id: string): [PublicKey, number] {
+  getCompetitionJackpotAccountPDA(name: string, league_id: string): [PublicKey, number] {
     try {
       const [pda, seed] = PublicKey.findProgramAddressSync(
         [Buffer.from(league_id), Buffer.from(name), Buffer.from("community_jackpot")], 
@@ -51,7 +51,6 @@ export default class FPLMantraCompetition {
       }
 
       let creatorAccount = new FPLMantraAccount();
-      let cretorAccountPDA = creatorAccount.getAccountPDA(creator_id, manager_id)[0];
       let competitionJackpotPDA = this.getCompetitionPDA(league_id, name)[0];
       
 

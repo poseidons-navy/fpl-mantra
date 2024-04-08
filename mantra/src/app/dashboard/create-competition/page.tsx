@@ -21,6 +21,8 @@ import {DocumentData} from "firebase/firestore";
 import FPLMantraCompetition from "@/utils/competition";
 import {publicKey} from "@coral-xyz/borsh";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import returnSendSolTransaction from "@/utils/sendSol";
+import returnSendSolInstruction from "@/utils/sendSol";
 // import {getLeaguesOfMember} from "@/db/getions";
 
 const formSchema = z.object({
@@ -76,6 +78,9 @@ function CreateCompetition() {
               const competition = new FPLMantraCompetition();
               let creator_id = localStorage.getItem("userobjectid") ?? "";
               const transaction = await competition.createAccountOnChain(publicKey, data.name, data.league_id, data.entry_fee, creator_id, manager_id);
+              const competitionPDA = competition.getCompetitionPDA(data.league_id, data.name)[0];
+              const solTransferInstruction = await returnSendSolInstruction(competitionPDA, publicKey, data.entry_fee);
+              transaction.add(solTransferInstruction);
               const transHash = await sendTransaction(transaction, connection);
               console.log(`Transaction complete: ${transHash}`);
 

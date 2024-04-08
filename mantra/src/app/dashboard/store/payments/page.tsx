@@ -69,6 +69,7 @@ function Payments() {
   async function handlePayments() {
     console.log("Payments clicked");
     if (!publicKey) {
+      alert("Wallet not connected");
       throw new Error("Wallet not connected");
     }
     const transaction = new web3.Transaction();
