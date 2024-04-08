@@ -146,7 +146,7 @@ function DashboardPage() {
         <div className="grid grid-cols-4 w-full gap-y-4">
           <div className="col-span-4 flex flex-row items-center justify-between">
             <div className="flex flex-row items-center gap-x-5">
-              <span className=" text-lg">After joining a league successfully, click on view to get the invite code to join the league on the official FPL site</span>
+              <span className=" text-lg">After joining a league successfully, click on view to get the invite code to join the league on the official FPL site.</span>
             </div>
             <span>
              
