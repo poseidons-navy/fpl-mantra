@@ -24,7 +24,7 @@ export default function Home() {
          <div className='w-full flex items-center justify-center md:justify-start gap-4'>
          
            <Link href="https://fantasy.premierleague.com/"><button className='w-48 h-12 text-sm sm:text-base rounded bg-white text-black hover:bg-fuchsia-700 hover:text-white transition-colors'>Sign up</button></Link>
-           <p className='max-w-md text-sm md:text-base text-zinc-500'>Already have an account? <Link className="text-black hover:text-fuchsia-700 " href="./Signup/">Log in</Link></p>
+           <p className='max-w-md text-sm md:text-base text-zinc-500'>Already have an account? <Link className="text-black hover:text-fuchsia-700 " href="./dashboard/create-account/">Log in</Link></p>
          </div>
        </div>
 

@@ -1,11 +1,11 @@
 import axios from "axios";
 import { NextResponse, type NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
   try {
     console.log("Enpoint hit");
-    const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("leagueId");
-    console.log("Got the leagueid",query);
+    console.log("Got the leagueid", query);
     const response = await axios.get(
       `https://fantasy.premierleague.com/api/leagues-classic/${query}/standings/`,
       {}

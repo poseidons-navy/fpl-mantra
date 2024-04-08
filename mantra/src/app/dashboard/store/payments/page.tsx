@@ -58,7 +58,7 @@ function Payments() {
   React.useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/leagues");
+        const response = await axios.get("/api/leagues");
         setLeagues(response.data);
         console.log(response);
       } catch (err) {
@@ -75,7 +75,7 @@ function Payments() {
     for (let league of leagues)
      {
       const response = await axios.get(
-        `http://localhost:3000/api/get_leagues?leagueId=${league.league_id}`,
+        `/api/get_leagues?leagueId=${league.league_id}`,
        
       );
       const manager_id = response.data.standings.results[0].entry;

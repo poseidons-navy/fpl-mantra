@@ -55,10 +55,10 @@ function DashboardPage() {
   React.useEffect(() => {
     (async () => {
       try {
-        const response: League[] = await axios.get(
-          "http://localhost:3000/api/leagues"
+        const response = await axios.get(
+          "/api/leagues"
         );
-        setLeagues(response);
+        setLeagues(response.data);
       } catch (err) {
         console.log(err);
       }
@@ -195,7 +195,7 @@ function DashboardPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {(leagues.data || []).map((elem, index) => {
+            {(leagues || []).map((elem: any, index: number) => {
               return (
                 <TableRow key={elem.league_id}>
                   <TableCell>{elem.name}</TableCell>
